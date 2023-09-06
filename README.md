@@ -1,5 +1,12 @@
 # jeungsangDiary
-증상일기 - 개인 진료 정보 기록 사이트
+## 증상일기 - 개인 진료 정보 기록 사이트
+
+### Contributors
+* 강찬욱
+* 김도연
+* 이규빈
+* 이세영
+* 정민규
 
 ### Project with Gradle informations
 * Spring Boot version - 2.7.16
