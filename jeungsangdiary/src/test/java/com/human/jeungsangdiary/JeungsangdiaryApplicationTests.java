@@ -8,6 +8,7 @@ class JeungsangdiaryApplicationTests {
 
 	@Test
 	void contextLoads() {
+		System.out.println("1111");
 	}
 
 }
