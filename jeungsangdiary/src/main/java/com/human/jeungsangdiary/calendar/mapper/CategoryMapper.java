@@ -1,11 +1,13 @@
 package com.human.jeungsangdiary.calendar.mapper;
 
-import java.util.HashMap;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+
+import com.human.jeungsangdiary.calendar.vo.CategoryVO;
 
 
 @Mapper
 public interface CategoryMapper {
-    HashMap<String, String> getCategories();
+    List<CategoryVO> getCategories();
 }

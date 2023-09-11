@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="CategoryMapper">
-    <select id="getCategories" resultType="HashMap">
-        SELECT * FROM categorys
+<mapper namespace="com.human.jeungsangdiary.calendar.mapper.CategoryMapper">
+    <select id="getCategories">
+        SELECT 
+            NAME as name,
+            IMG_URL as imgUrl
+        FROM
+            categorys
     </select>
 </mapper>
