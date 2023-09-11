@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryVO {
+    private Long unqId;
     private String name;
-    private String img_url;
+    private String imgUrl;
 }
