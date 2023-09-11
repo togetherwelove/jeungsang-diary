@@ -1,4 +1,4 @@
-// users Å×ÀÌºí »ı¼º
+// users ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE TABLE users (
     unq_id NUMBER GENERATED ALWAYS AS IDENTITY,
     id VARCHAR2(55) NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE users (
     PRIMARY KEY (unq_id)
 );
 
-// user_detail Å×ÀÌºí »ı¼º
+// user_detail ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE TABLE user_detail (
     user_id NUMBER,
     name VARCHAR2(20),
@@ -20,7 +20,7 @@ CREATE TABLE user_detail (
     FOREIGN KEY (user_id) REFERENCES users(unq_id)
 );
 
-// user_residence Å×ÀÌºí »ı¼º
+// user_residence ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE TABLE user_residence (
     user_id NUMBER,
     postcode NUMBER,
@@ -30,7 +30,7 @@ CREATE TABLE user_residence (
     FOREIGN KEY (user_id) REFERENCES users(unq_id)
 );
 
-// BOARDS Å×ÀÌºí »ı¼º
+// BOARDS ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE SEQUENCE board_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE boards (
@@ -45,7 +45,7 @@ CREATE TABLE boards (
     FOREIGN KEY (user_id) REFERENCES users(unq_id)
 );
 
-// COMMENTS Å×ÀÌºí »ı¼º
+// COMMENTS ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE TABLE comments (
     board_id NUMBER,
     user_id NUMBER,
@@ -56,7 +56,7 @@ CREATE TABLE comments (
     FOREIGN KEY (user_id) REFERENCES users(unq_id)
 );
 
-// FILES Å×ÀÌºí »ı¼º
+// FILES ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE TABLE files (
     board_id NUMBER,
     original_name VARCHAR2(255),
@@ -66,7 +66,7 @@ CREATE TABLE files (
     FOREIGN KEY (board_id) REFERENCES boards(unq_id)
 );
 
-// CELLS Å×ÀÌºí »ı¼º
+// CELLS ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE SEQUENCE cell_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE cells (
@@ -78,7 +78,7 @@ CREATE TABLE cells (
     PRIMARY KEY (unq_id)
 );
 
-// CATEGORYS Å×ÀÌºí »ı¼º
+// CATEGORYS ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE SEQUENCE category_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE categorys (
@@ -89,7 +89,7 @@ CREATE TABLE categorys (
     PRIMARY KEY (unq_id)
 );
 
-// cell & category ±³Â÷ Å×ÀÌºí »ı¼º
+// cell & category ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE TABLE category_cells (
     category_id NUMBER,
     cell_id NUMBER,
@@ -100,18 +100,37 @@ CREATE TABLE category_cells (
     FOREIGN KEY (cell_id) REFERENCES cells(unq_id)
 );
 
----- ¼öÁ¤
--- comments Å×ÀÌºí ¼öÁ¤
--- °íÀ¯ ¹øÈ£ »ı¼º
+---- ï¿½ï¿½ï¿½ï¿½
+-- comments ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
+-- ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ï¿½ï¿½
 CREATE SEQUENCE comment_seq START WITH 1 INCREMENT BY 1;
 
 ALTER TABLE comments 
 ADD unq_id NUMBER DEFAULT comment_seq.NEXTVAL PRIMARY KEY;
 
--- users Å×ÀÌºí ¼öÁ¤
+-- users ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 ALTER TABLE users MODIFY id VARCHAR2(255) UNIQUE;
 ALTER TABLE users MODIFY email VARCHAR2(255) UNIQUE;
 
--- files Å×ÀÌºí¿¡ upload_date ÄÃ·³ Ãß°¡
+-- files ï¿½ï¿½ï¿½Ìºï¿½ï¿½ï¿½ upload_date ï¿½Ã·ï¿½ ï¿½ß°ï¿½
 ALTER TABLE files 
 ADD (upload_date DATE DEFAULT SYSDATE);
+
+SELECT * FROM CATEGORYS;
+
+INSERT INTO categorys (name, img_url) VALUES ('í”¼ë¶€', 'https://i.imgur.com/AO9j9IB.png');
+INSERT INTO categorys (name, img_url) VALUES ('êµ¬ê°•', 'https://i.imgur.com/F490otZ.png');
+INSERT INTO categorys (name, img_url) VALUES ('ë¼ˆê·¼ìœ¡', 'https://i.imgur.com/p45JiZU.png');
+INSERT INTO categorys (name, img_url) VALUES ('ë‡Œì‹ ê²½', 'https://i.imgur.com/MDu0Nty.png');
+INSERT INTO categorys (name, img_url) VALUES ('ìˆœí™˜ê¸°', 'https://i.imgur.com/RKgjKdQ.png');
+INSERT INTO categorys (name, img_url) VALUES ('ì†Œí™”ê¸°', 'https://i.imgur.com/hsuIbAy.png');
+INSERT INTO categorys (name, img_url) VALUES ('ë‚´ë¶„ë¹„', 'https://i.imgur.com/83JIuq2.png');
+INSERT INTO categorys (name, img_url) VALUES ('ëˆˆ', 'https://i.imgur.com/gHex43t.png');
+INSERT INTO categorys (name, img_url) VALUES ('ë©´ì—­', 'https://i.imgur.com/ykjhLro.png');
+INSERT INTO categorys (name, img_url) VALUES ('ìƒì‹ê¸°', 'https://i.imgur.com/ESE5WuZ.png');
+INSERT INTO categorys (name, img_url) VALUES ('í˜¸í¡ê¸°', 'https://i.imgur.com/YNuZUrU.png');
+INSERT INTO categorys (name, img_url) VALUES ('ë¹„ë‡¨ê¸°', 'https://i.imgur.com/nyNQtAF.png');
+INSERT INTO categorys (name, img_url) VALUES ('ê·€ì½”ëª©', 'https://i.imgur.com/THiWsFB.png');
+INSERT INTO categorys (name, img_url) VALUES ('ì •ì‹ ê±´ê°•', 'https://i.imgur.com/ZqW1oVK.png');
+
+COMMIT;
