@@ -7,48 +7,50 @@
   </head>
   <body>
     <div th:replace="fragments/common :: header"></div>
-    <section class="main container">
-      <div class="inner">
+    <section class="container">
         <!-- 제목 영역 -->
-        <div class="main-title">
+        <div class="d-flex justify-content-between align-items-center">
           <h1>게시글 읽기</h1>
         </div>
-
-        <div class="info-box">
-          <div class="item">
-            <span class="label">조회수 : </span>
-            <span id="board-view" class="board-view">0</span>
-          </div>
-        </div>
         <!-- 게시글 목록 -->
-        <table class="board">
+        <table class="table table-striped table-hover">
           <tr>
-            <td class="label">제목</td>
-            <td class="data">
+            <td class="label">조회수</td>
+            <td>
+              <span id="board-view">0</span>
+            </td>
+          </tr>
+          <tr>
+            <td>제목</td>
+            <td>
               <h5 id="board-title"></h5>
             </td>
           </tr>
           <tr>
-            <td class="label">작성자</td>
-            <td class="data">
+            <td>작성자</td>
+            <td>
               <h5 id="board-writer"></h5>
             </td>
           </tr>
           <tr>
-            <td class="label">내용</td>
-            <td class="data">
+            <td>내용</td>
+            <td>
               <p id="board-content"></p>
             </td>
           </tr>
           <tr>
-            <td class="label">파일</td>
-            <td class="data">
+            <td>파일</td>
+            <td>
               <!-- 파일 목록 -->
               <ul id="file-list"></ul>
             </td>
           </tr>
         </table>
-
+        <div>
+          <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-update">수정</a>
+          <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-delete">삭제</a>
+        </div>
+        <br>
         <!-- 댓글 목록 -->
         <div id="comment-list">
           <!-- <div class="comment-box">
@@ -74,28 +76,16 @@
         </div>
 
         <!-- 댓글 입력 -->
-        <div class="input-box">
-          <div class="top">
-            <h3>댓글 입력</h3>
-          </div>
-          <div class="comment-input">
-            <input type="text" name="writer" id="comment-writer" placeholder="작성자" />
-            <br />
-            <textarea name="content" id="comment-content" cols="60" rows="5" placeholder="댓글을 작성해주세요"></textarea>
-            <div class="btn-box">
-              <a href="javascript:;" id="btn-comment-insert" class="btn btn-sm">등록</a>
-            </div>
-          </div>
+        <div>
+          <h4>댓글 입력</h4>
+            <input type="text" name="writer" id="comment-writer" class="form-control" placeholder="작성자" />
+            <textarea name="content" id="comment-content" cols="60" rows="5" 
+                      placeholder="댓글을 작성해주세요" class="form-control"></textarea>
         </div>
-
-        <div class="btn-box">
-          <div class="item">
-            <a href="list" class="btn">목록</a>
-          </div>
-          <div class="item">
-            <a href="update:;" class="btn btn-update">수정</a>
-            <a href="javascript:;" class="btn btn-delete">삭제</a>
-          </div>
+        <br>            
+        <div>
+          <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-insert">등록</a>
+          <a href="list" class="btn btn-outline-primary" id="btn-comment-insert">목록</a>
         </div>
       </div>
     </section>

@@ -10,22 +10,27 @@ public class BoardController {
 
     @GetMapping("/list")
     public String list() {
-        return "board/board_list";
+        return "board/list";
     }
 
     @GetMapping("/read")
     public String read() {
-        return "board/board_read";
+        return "board/read";
     }
 
     @GetMapping("/update")
     public String update() {
-        return "board/board_update";
+        return "board/update";
     }
 
-     @GetMapping("/insert")
+    @GetMapping("/insert")
     public String insert() {
-        return "board/board_insert";
+        return "board/insert";
+    }
+
+    @GetMapping("/result")
+    public String result() {
+        return "board/result";
     }
 
 }
