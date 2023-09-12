@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>게시글 쓰기</title>
   </head>
+
   <body>
     <div th:replace="fragments/common :: header"></div>
-    <section class="main container">
-      <div class="inner">
-        <!-- 제목 영역 -->
-        <div class="main-title">
+    <section class="container">
+      <div>
+        <div class="d-flex justify-content-between align-items-center">
           <h1>게시글 쓰기</h1>
         </div>
 
@@ -18,42 +18,42 @@
         <!-- 요청 데이터에 file 이 있다면, 인코딩을 하지 않도록 
                 enctype="multipart/form-data" 로 설정해준다. -->
         <form action="http://192.168.0.200:8080/api/board" method="post" id="form" enctype="multipart/form-data">
-          <table class="board">
-            <tr>
-              <td class="label">제목</td>
+          <table class="table table-striped table-hover">
+            <tr class="text-center">
+              <td style="width: 7.5%" id="num">제목</td>
               <td class="data">
-                <input type="text" name="title" id="title" class="input-text" />
+                <input type="text" name="title" id="title" class="form-control"/>
                 <p id="title-error" class="error-msg"></p>
               </td>
             </tr>
-            <tr>
-              <td class="label">작성자</td>
-              <td class="data">
-                <input type="text" name="writer" id="writer" class="input-text" />
+            <tr class="text-center">
+              <td style="width: 7.5%" id="num">작성자</td>
+              <td>
+                <input type="text" name="writer" id="writer" class="form-control"/>
                 <p id="writer-error" class="error-msg"></p>
               </td>
             </tr>
-            <tr>
-              <td class="label">내용</td>
-              <td class="data">
-                <textarea name="content" id="content" cols="30" rows="10" class="input-textarea"></textarea>
+            <tr class="text-center">
+              <td style="width: 7.5%" id="num">내용</td>
+              <td>
+                <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
               </td>
             </tr>
             <tr>
-              <td class="label">파일</td>
-              <td class="data">
+              <td>파일</td>
+              <td>
                 <input type="file" name="file" id="file" multiple />
               </td>
             </tr>
           </table>
         </form>
 
-        <div class="btn-box">
-          <div class="item">
-            <a href="list" class="btn">목록</a>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <a href="list" class="btn btn-lg btn-primary">목록</a>
           </div>
-          <div class="item">
-            <a href="javascript:;" class="btn" id="btn-insert">등록</a>
+          <div>
+            <a href="javascript:;" class="btn btn-lg btn-primary" id="btn-insert">등록</a>
           </div>
         </div>
       </div>
