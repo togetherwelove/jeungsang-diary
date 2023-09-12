@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
   <head th:replace="fragments/common :: scripts">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,50 +17,50 @@
         <!-- 게시글 입력 -->
         <!-- 요청 데이터에 file 이 있다면, 인코딩을 하지 않도록 
                 enctype="multipart/form-data" 로 설정해준다. -->
-        <form action="http://192.168.0.200:8080/api/board" method="post" id="form" enctype="multipart/form-data">
+        <form action="result" method="POST" id="form" enctype="multipart/form-data">
           <table class="table table-striped table-hover">
-            <tr class="text-center">
-              <td style="width: 7.5%" id="num">제목</td>
-              <td class="data">
+            <tr>
+              <td style="width: 7.5%" id="title-label">제목</td>
+              <td>
                 <input type="text" name="title" id="title" class="form-control"/>
                 <p id="title-error" class="error-msg"></p>
               </td>
             </tr>
-            <tr class="text-center">
-              <td style="width: 7.5%" id="num">작성자</td>
+            <tr>
+              <td style="width: 7.5%" id="writer-label">작성자</td>
               <td>
                 <input type="text" name="writer" id="writer" class="form-control"/>
                 <p id="writer-error" class="error-msg"></p>
               </td>
             </tr>
-            <tr class="text-center">
-              <td style="width: 7.5%" id="num">내용</td>
+            <tr>
+              <td style="width: 7.5%" id="content-label">내용</td>
               <td>
                 <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
               </td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td>파일</td>
               <td>
-                <input type="file" name="file" id="file" multiple />
+                <input type="file" name="file" id="file" multiple/>
               </td>
-            </tr>
+            </tr> -->
           </table>
+          
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <a href="list" class="btn btn-outline-primary" id="btn-insert">목록</a>
+            </div>
+            <div>
+              <input type="submit" value="등록" class="btn btn-outline-primary">
+            </div>
+          </div>
         </form>
-
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <a href="list" class="btn btn-lg btn-primary">목록</a>
-          </div>
-          <div>
-            <a href="javascript:;" class="btn btn-lg btn-primary" id="btn-insert">등록</a>
-          </div>
-        </div>
       </div>
     </section>
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="../js/jquery-3.7.0.min.js"></script>
     <script>
       function validCheck(id, label, length = -1) {
@@ -162,7 +162,7 @@
           event.preventDefault();
         }
       });
-    </script>
+    </script> -->
     <div th:replace="fragments/common :: footer"></div>
   </body>
 </html>
