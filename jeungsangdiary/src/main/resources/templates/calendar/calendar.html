@@ -10,29 +10,90 @@
     <div class="container">
       <div class="row">
         <div class="col-md-9">
+          <img id="trash-can" src="https://i.imgur.com/UhIG0fh.png" hidden />
           <div id="calendar"></div>
+          <div class="rounded" id="toast" hidden></div>
         </div>
-        <div class="col-md-3 row">
-          <div class="col d-flex justify-content-center align-items-center flex-column border rounded" th:each="category : ${categories}">
-            <img style="width: 48px" th:src="${category.getImgUrl()}" th:alt="${category.getName()}" />
-            <span th:text="${category.getName()}"></span>
+        <div class="col-md-3">
+          <div class="row" id="draggable">
+            <div class="col d-flex justify-content-center align-items-center flex-column border rounded m-1 p-3 draggable-item" th:each="category : ${categories}">
+              <img style="width: 48px" th:src="${category.getImgUrl()}" th:alt="${category.getName()}" />
+              <span th:text="${category.getName()}"></span>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div th:replace="fragments/common :: footer"></div>
-    <script>
+    <script type="text/javascript">
       $(document).ready(function () {
-        var calendarEl = $("#calendar")[0];
-        var calendar = new FullCalendar.Calendar(calendarEl, {
+        const showToast = function (message) {
+          var toast = $("#toast");
+          toast.attr("hidden", false);
+          toast.html(message);
+          setTimeout(function () {
+            toast.attr("hidden", true);
+          }, 3000);
+        };
+
+        let draggableEl = $("#draggable")[0];
+        let Draggable = FullCalendar.Interaction.Draggable;
+        new Draggable(draggableEl, {
+          itemSelector: ".draggable-item",
+          eventData: function (eventEl) {
+            return {
+              title: eventEl.innerText,
+            };
+          },
+        });
+
+        const isElOverTrash = function (jsEvent) {
+          var trashEl = $("#trash-can");
+          var ofs = trashEl.offset();
+
+          var x1 = ofs.left;
+          var x2 = ofs.left + trashEl.outerWidth(true);
+          var y1 = ofs.top;
+          var y2 = ofs.top + trashEl.outerHeight(true);
+
+          return jsEvent.pageX >= x1 && jsEvent.pageX <= x2 && jsEvent.pageY >= y1 && jsEvent.pageY <= y2;
+        };
+
+        let calendarEl = $("#calendar")[0];
+        let calendar = new FullCalendar.Calendar(calendarEl, {
           themeSystem: "bootstrap5",
+          longPressDelay: 0,
+          droppable: true,
+          editable: true,
           locale: "ko",
           initialView: "dayGridMonth",
           googleCalendarApiKey: "AIzaSyBtgk1SVteetnW1M5HJcNL4hCqeecJ_x4M",
           events: {
             googleCalendarId: "ko.south_korea#holiday@group.v.calendar.google.com",
           },
+          eventClick: function (event, jsEvent, view) {
+            console.log("event click", event);
+          },
+          eventDragStart: function (info) {
+            info.el.classList.add("shadow");
+            $("#trash-can").attr("hidden", false);
+          },
+          eventDragStop: function (info) {
+            info.el.classList.remove("shadow");
+            if (isElOverTrash(info.jsEvent)) {
+              $("#trash-can").attr("hidden", true);
+              if (confirm("정말로 삭제하시겠습니까?")) {
+                info.event.remove();
+                showToast("삭제되었습니다.");
+              }
+            }
+            $("#trash-can").attr("hidden", true);
+          },
+          drop: function (info) {
+            showToast("생성되었습니다.");
+          },
         });
+
         calendar.render();
       });
     </script>
