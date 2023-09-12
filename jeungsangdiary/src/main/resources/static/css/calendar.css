@@ -1,0 +1,23 @@
+.draggable-item {
+  position: relative;
+  z-index: 999;
+  background-color: white;
+}
+
+#trash-can {
+  position: absolute;
+  width: 48px;
+  left: 225px;
+}
+
+#toast {
+  position: fixed;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 16px;
+  z-index: 1000;
+  right: 30px;
+  bottom: 30px;
+  font-size: 17px;
+}
