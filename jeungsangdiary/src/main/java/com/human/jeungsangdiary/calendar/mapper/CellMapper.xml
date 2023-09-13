@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jeungsangdiary.calendar.mapper.CellMapper">
+    <select id="getEvents">
+        SELECT 
+            UNQ_ID as unqId,
+            TO_CHAR(POST_DATE, 'YYYY-mm-dd') as postDate,
+            CONTENT,
+            TO_CHAR(WRITE_DATE, 'YYYY-mm-dd') as writeDate
+        FROM
+            cells
+    </select>
+</mapper>
