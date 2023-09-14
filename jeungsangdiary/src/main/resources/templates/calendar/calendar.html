@@ -202,7 +202,6 @@
             .find(".btn-primary")
             .off()
             .on("click", function () {
-              var cellId = info.event.id;
               var date = modal.find("#event-date").val();
               var contetnt = modal.find("#content-text").val();
               var data = {
@@ -234,6 +233,7 @@
                 });
               } else {
                 // 수정 로직
+                var cellId = info.event.id;
                 $.ajax({
                   url: "/calendar/update/" + cellId,
                   method: "PUT",
