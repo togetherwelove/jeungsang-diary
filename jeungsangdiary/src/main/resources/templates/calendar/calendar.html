@@ -8,16 +8,44 @@
   <body>
     <div th:replace="fragments/common :: header"></div>
     <div class="container">
+      <div class="rounded" id="toast" hidden></div>
       <div class="row">
         <div class="col-md-9">
           <img id="trash-can" src="https://i.imgur.com/UhIG0fh.png" hidden />
           <div id="calendar"></div>
-          <div class="rounded" id="toast" hidden></div>
         </div>
+
+        <div class="modal" id="event-modal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="event-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="md-3">
+                    <label for="event-date" class="col-form-label">날짜</label>
+                    <input type="date" class="form-control" id="event-date" />
+                  </div>
+                  <div class="md-3">
+                    <label for="content-text" class="col-form-label">증상</label>
+                    <textarea class="form-control" id="content-text"></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary">저장하기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="col-md-3">
           <div class="row" id="draggable">
-            <div class="col d-flex justify-content-center align-items-center flex-column border rounded m-1 p-3 draggable-item" th:each="category : ${categories}">
-              <img style="width: 48px" th:src="${category.getImgUrl()}" th:alt="${category.getName()}" />
+            <div class="col d-flex justify-content-center align-items-center flex-column border rounded m-1 p-3 draggable-item" th:each="category : ${categories}" th:id="|category-${category.getUnqId()}|">
+              <img style="width: 48px" th:src="${category.getImgUrl()}" />
               <span th:text="${category.getName()}"></span>
             </div>
           </div>
@@ -27,6 +55,10 @@
     <div th:replace="fragments/common :: footer"></div>
     <script type="text/javascript">
       $(document).ready(function () {
+        /**
+         * 알림창 띄우기
+         * @param message 알림창에 띄울 메시지
+         */
         const showToast = function (message) {
           var toast = $("#toast");
           toast.attr("hidden", false);
@@ -36,17 +68,25 @@
           }, 3000);
         };
 
-        let draggableEl = $("#draggable")[0];
-        let Draggable = FullCalendar.Interaction.Draggable;
-        new Draggable(draggableEl, {
-          itemSelector: ".draggable-item",
-          eventData: function (eventEl) {
-            return {
-              title: eventEl.innerText,
-            };
-          },
-        });
+        const modal = $("#event-modal");
+        /**
+         * 모달 창을 보여주는 함수
+         * @param title 이벤트의 제목
+         * @param date 이벤트의 날짜
+         * @param content 이벤트의 내용 (선택사항)
+         */
+        function showModal(modal, title, date, content = "") {
+          modal.find(".event-title").text(title);
+          modal.find("#event-date").val(date);
+          modal.find("#content-text").val(content);
 
+          modal.modal("show");
+        }
+
+        /**
+         * 내부 이벤트 Drag & Drop 시, #trash-can 요소와 겹쳐있으면 true 반환
+         * @param jsEvent 클릭 좌표와 같은 하위 수준 정보가 포함된 기본 JavaScript 이벤트
+         */
         const isElOverTrash = function (jsEvent) {
           var trashEl = $("#trash-can");
           var ofs = trashEl.offset();
@@ -59,41 +99,170 @@
           return jsEvent.pageX >= x1 && jsEvent.pageX <= x2 && jsEvent.pageY >= y1 && jsEvent.pageY <= y2;
         };
 
+        var isDrop = false;
+        const offset = new Date().getTimezoneOffset() * 60000;
+        // calendar START
         let calendarEl = $("#calendar")[0];
-        let calendar = new FullCalendar.Calendar(calendarEl, {
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
           themeSystem: "bootstrap5",
-          longPressDelay: 0,
           droppable: true,
           editable: true,
           locale: "ko",
-          initialView: "dayGridMonth",
           googleCalendarApiKey: "AIzaSyBtgk1SVteetnW1M5HJcNL4hCqeecJ_x4M",
-          events: {
-            googleCalendarId: "ko.south_korea#holiday@group.v.calendar.google.com",
-          },
-          eventClick: function (event, jsEvent, view) {
-            console.log("event click", event);
+          eventSources: [
+            {
+              url: "/calendar/event",
+              method: "GET",
+              failure: function () {
+                alert("이벤트를 불러오는 데 실패했습니다.");
+              },
+            },
+            {
+              googleCalendarId: "ko.south_korea#holiday@group.v.calendar.google.com",
+              className: "gcal-event",
+            },
+          ],
+          eventClick: function (info) {
+            var id = info.event.id;
+            var title = info.event.title;
+            var localStart = new Date(info.event.start.getTime() - offset);
+
+            var start = localStart.toISOString().split("T")[0];
+            var content = info.event.extendedProps.content;
+
+            isDrop = false;
+            showModal(modal, title, start, content);
+            modalEventHandeler(info);
           },
           eventDragStart: function (info) {
-            info.el.classList.add("shadow");
             $("#trash-can").attr("hidden", false);
           },
           eventDragStop: function (info) {
-            info.el.classList.remove("shadow");
             if (isElOverTrash(info.jsEvent)) {
               $("#trash-can").attr("hidden", true);
-              if (confirm("정말로 삭제하시겠습니까?")) {
-                info.event.remove();
-                showToast("삭제되었습니다.");
+              const id = info.event.id;
+
+              if (confirm("정말 삭제하시겠습니까?")) {
+                $.ajax({
+                  url: "/calendar/delete/" + id,
+                  method: "DELETE",
+                  success: function (response) {
+                    if (response.success) {
+                      info.event.remove();
+                      showToast("삭제되었습니다.");
+                      calendar.refetchEvents();
+                    }
+                  },
+                  error: function (error) {
+                    console.log("ajax error");
+                  },
+                });
               }
             }
             $("#trash-can").attr("hidden", true);
           },
+          eventDrop: function (info) {
+            var id = info.event.id;
+            var localStart = new Date(info.event.start.getTime() - offset);
+            var newStart = localStart.toISOString().split("T")[0];
+            var data = {
+              postDate: newStart,
+            };
+            $.ajax({
+              url: "/calendar/event/" + id,
+              method: "PUT",
+              contentType: "application/json",
+              data: JSON.stringify(data),
+              success: function (response) {
+                if (response.success) {
+                  showToast("날짜가 변경되었습니다.");
+                  calendar.refetchEvents();
+                }
+              },
+              error: function (error) {},
+            });
+          },
+          //외부 이벤트가 Drop 될 때
           drop: function (info) {
-            showToast("생성되었습니다.");
+            var title = info.draggedEl.innerText;
+            var date = info.dateStr;
+
+            isDrop = true;
+            showModal(modal, title, date);
+            modalEventHandeler(info);
           },
         });
+        // calendar END
+
         calendar.render();
+
+        const modalEventHandeler = function (info) {
+          modal
+            .find(".btn-primary")
+            .off()
+            .on("click", function () {
+              var cellId = info.event.id;
+              var date = modal.find("#event-date").val();
+              var contetnt = modal.find("#content-text").val();
+              var data = {
+                postDate: date,
+                content: contetnt,
+              };
+              if (isDrop) {
+                // 삽입 로직
+                var categoryId = info.draggedEl.id.replace("category-", "");
+                $.ajax({
+                  url: "/calendar/event/" + categoryId,
+                  method: "POST",
+                  contentType: "application/json",
+                  data: JSON.stringify(data),
+                  success: function (response) {
+                    if (response.success) {
+                      showToast("추가되었습니다.");
+                      calendar.refetchEvents();
+                    } else {
+                      console.log("서버에서 응답이 성공적이지 않았습니다.");
+                    }
+
+                    $("#event-modal").modal("hide");
+                  },
+                  error: function (error) {
+                    console.log("AJAX 요청 에러: ", error);
+                    $("#event-modal").modal("hide");
+                  },
+                });
+              } else {
+                // 수정 로직
+                $.ajax({
+                  url: "/calendar/update/" + cellId,
+                  method: "PUT",
+                  contentType: "application/json",
+                  data: JSON.stringify(data),
+                  success: function (response) {
+                    if (response.success) {
+                      showToast("수정되었습니다.");
+                      calendar.refetchEvents();
+                    } else {
+                      console.log("서버에서 응답이 성공적이지 않았습니다.");
+                    }
+
+                    $("#event-modal").modal("hide");
+                  },
+                  error: function (error) {
+                    console.log("AJAX 요청 에러: ", error);
+                    $("#event-modal").modal("hide");
+                  },
+                });
+              }
+            });
+        };
+
+        let draggableEl = $("#draggable")[0];
+        let Draggable = FullCalendar.Interaction.Draggable;
+        new Draggable(draggableEl, {
+          itemSelector: ".draggable-item",
+        });
       });
     </script>
   </body>

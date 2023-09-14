@@ -3,9 +3,21 @@
 <mapper namespace="com.human.jeungsangdiary.calendar.mapper.CategoryMapper">
     <select id="getCategories">
         SELECT 
-            NAME as name,
+            UNQ_ID as unqId,
+            NAME,
             IMG_URL as imgUrl
         FROM
             categorys
+    </select>
+
+    <select id="getCategoryName">
+        SELECT
+            c.name as name
+        FROM
+            categorys c
+        LEFT OUTER JOIN category_cells ccell
+        ON c.unq_id = ccell.category_id
+        WHERE
+            ccell.cell_id = #{unqId}
     </select>
 </mapper>
