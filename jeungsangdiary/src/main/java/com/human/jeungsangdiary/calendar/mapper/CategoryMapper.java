@@ -10,4 +10,6 @@ import com.human.jeungsangdiary.calendar.vo.CategoryVO;
 @Mapper
 public interface CategoryMapper {
     List<CategoryVO> getCategories();
+
+    String getCategoryName(Long unqId);
 }

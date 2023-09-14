@@ -1,7 +1,14 @@
+.gcal-event {
+  border-color: orangered;
+  background-color: orangered;
+  pointer-events: none;
+}
+
 .draggable-item {
   position: relative;
   z-index: 999;
   background-color: white;
+  transition: all 0.1s ease-out;
 }
 
 #trash-can {

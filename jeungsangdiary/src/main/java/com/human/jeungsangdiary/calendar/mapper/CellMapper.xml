@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jeungsangdiary.calendar.mapper.CellMapper">
+    <!-- getEvents -->
+    <select id="getEvents">
+        SELECT 
+            UNQ_ID as unqId,
+            TO_CHAR(POST_DATE, 'YYYY-mm-dd') as postDate,
+            CONTENT,
+            TO_CHAR(WRITE_DATE, 'YYYY-mm-dd') as writeDate
+        FROM
+            cells
+    </select>
+
+    <select id="getEventById">
+        SELECT 
+            UNQ_ID as unqId,
+            TO_CHAR(POST_DATE, 'YYYY-mm-dd') as postDate,
+            CONTENT,
+            TO_CHAR(WRITE_DATE, 'YYYY-mm-dd') as writeDate
+        FROM
+            cells
+        WHERE
+            UNQ_ID = #{cellId}
+    </select>
+
+    <!-- addEvent --> 
+    <insert id="addEvent" parameterType="com.human.jeungsangdiary.calendar.vo.CellVO">
+        INSERT INTO
+            cells (
+                UNQ_ID,
+                POST_DATE,
+                CONTENT
+            ) VALUES (
+                #{unqId},
+                #{postDate},
+                #{content}
+            )
+    </insert>
+
+    <!-- getNextId -->
+    <select id="getNextId">
+        SELECT CELL_SEQ.NEXTVAL FROM dual
+    </select>
+
+    <!-- deleteById --> 
+    <delete id="deleteById">
+        DELETE FROM cells WHERE UNQ_ID = #{id}
+    </delete>
+
+    <update id="moveEvent">
+        UPDATE cells
+        SET
+            POST_DATE = #{postDate}
+        WHERE
+            UNQ_ID = #{id}
+    </update>
+
+    <update id="updateEvent">
+        UPDATE cells
+        SET
+            POST_DATE = #{postDate},
+            CONTENT = #{content}
+        WHERE
+            UNQ_ID = #{unqId}
+    </update>
+</mapper>
