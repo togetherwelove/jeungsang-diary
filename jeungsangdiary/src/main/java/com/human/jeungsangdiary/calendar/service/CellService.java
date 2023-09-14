@@ -1,6 +1,5 @@
 package com.human.jeungsangdiary.calendar.service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.human.jeungsangdiary.calendar.dao.CategoryDAO;
 import com.human.jeungsangdiary.calendar.dao.CellDAO;
@@ -39,5 +39,33 @@ public class CellService {
         }
         
         return eventList;
+    }
+
+    @Transactional
+    public Long addEvent(CellVO cell) {
+        Long newId = cellDAO.getNextId();
+        cell.setUnqId(newId);
+        cellDAO.addEvent(cell);
+        return newId;
+    }
+
+    public void deleteById(Long id) {
+        cellDAO.deleteById(id);
+    }
+
+    public CellVO getEventById(Long cellId) {
+        return cellDAO.getEventById(cellId);
+    }
+
+    public void setCategoryByEventId(Long categoryId, Long insertedEventId) {
+        cellDAO.setCategoryByEventId(categoryId, insertedEventId);
+    }
+
+    public void moveEvent(Long id, String postDate) {
+        cellDAO.moveEvnet(id, postDate);
+    }
+
+    public void updateEvent(CellVO existingCell) {
+        cellDAO.updateEvent(existingCell);
     }
 }
