@@ -4,6 +4,16 @@
   pointer-events: none;
 }
 
+.event-hover {
+  border-color: #1a4f8a;
+  background-color: #1a4f8a;
+  color: inherit;
+}
+
+.external-event-hover {
+  transform: scale(1.1);
+}
+
 .draggable-item {
   position: relative;
   z-index: 999;
@@ -11,9 +21,22 @@
   transition: all 0.1s ease-out;
 }
 
+.category-imgs {
+  width: 48px;
+}
+
+@media (max-width: 1199px) and (min-width: 992px) {
+  .category-imgs {
+    width: 38px;
+  }
+  .category-imgs + span {
+    font-size: 13px;
+  }
+}
+
 #trash-can {
   position: absolute;
-  width: 48px;
+  width: 52px;
   left: 225px;
 }
 
