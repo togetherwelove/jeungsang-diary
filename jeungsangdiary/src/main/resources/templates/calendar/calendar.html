@@ -148,6 +148,33 @@
           });
         }
 
+        /**
+         * 날짜 필드의 유효성을 검사하고 유효하지 않은 경우 오류 메시지를 표시합니다.
+         *
+         * @param {string} dateValue - 유효성을 검사할 날짜의 필드 값
+         * @param {string} inputSelector - 오류를 표시할 입력 필드 CSS 셀렉터 (class)
+         * @param {string} feedbackId - 메시지를 표시할 div 필드 CSS 셀렉터 (id)
+         * @param {string} errorMessage - 실패할 경우 표시되는 오류 메시지
+         *
+         * @returns {boolean} - 날짜가 유효하면 true를 반환하고, 그렇지 않으면 false를 반환합니다.
+         */
+        function validateDateField(dateValue, inputSelector, errorMessage) {
+          if (!dateValue) {
+            $(inputSelector).addClass("is-invalid");
+
+            if (!$(".invalid-feedback").length) {
+              $(inputSelector).after(`<div class='invalid-feedback'>${errorMessage}</div>`);
+            }
+
+            return false;
+          } else {
+            $(inputSelector).removeClass("is-invalid");
+            $(".invalid-feedback").remove();
+          }
+
+          return true;
+        }
+
         const calendar = new FullCalendar.Calendar(calendarEl, {
           initialView: "dayGridMonth",
           themeSystem: "bootstrap5",
@@ -189,63 +216,83 @@
                   .on("click", function () {
                     let startDate = $("#export-date-start").val();
                     let endDate = $("#export-date-end").val();
-                    if (!startDate) {
-                      $("#export-date-start").addClass("is-invalid");
-                      if (!$("#start-invalid-feedback").length) {
-                        $("#export-date-start").after('<div id="start-invalid-feedback" class="invalid-feedback">시작 날짜를 입력해주세요.</div>');
-                      }
+                    if (!validateDateField(startDate, "#export-date-start", "시작 날짜를 입력해주세요.")) {
                       return;
-                    } else {
-                      $("#export-date-start").removeClass("is-invalid");
-                      $("#start-invalid-feedback").remove();
                     }
-                    if (!endDate) {
-                      $("#export-date-end").addClass("is-invalid");
-                      if (!$("#end-invalid-feedback").length) {
-                        $("#export-date-end").after('<div id="end-invalid-feedback" class="invalid-feedback">끝 날짜를 입력해주세요.</div>');
-                      }
+                    if (!validateDateField(endDate, "#export-date-end", "끝 날짜를 입력해주세요.")) {
                       return;
-                    } else {
-                      $("#export-date-end").removeClass("is-invalid");
-                      $("#end-invalid-feedback").remove();
                     }
-
                     $.ajax({
                       url: "/calendar/event",
                       method: "GET",
                       success: function (ajaxData) {
-                        let filteredData = ajaxData
-                          .filter(function (item) {
-                            let itemDate = new Date(item.start);
-                            return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
-                          })
-                          .map(function (item) {
-                            return {
-                              날짜: item.start,
-                              대분류: item.title,
-                              증상: item.content,
-                            };
+                        let filteredData = ajaxData.filter(function (item) {
+                          let itemDate = new Date(item.start);
+                          return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
+                        });
+
+                        // 날짜를 내림차순으로 정렬
+                        filteredData.sort((a, b) => new Date(b.start) - new Date(a.start));
+
+                        const doc = new jspdf.jsPDF("p", "mm", "a4");
+
+                        fetch("/font/malgun.txt")
+                          .then((data) => data.text())
+                          .then((text) => {
+                            doc.addFileToVFS("malgun.ttf", text);
+                            doc.addFont("malgun.ttf", "malgun", "normal");
+                            doc.setFont("malgun");
+
+                            let columns = ["날짜", "대분류", "증상"];
+
+                            // 필터링 된 데이터로 행 생성하기
+                            let rows = filteredData.map(function (item) {
+                              return [item.start, item.title, item.content];
+                            });
+
+                            // 테이블 생성
+                            doc.autoTable({
+                              theme: "grid",
+                              startY: 30,
+                              head: [columns],
+                              body: rows,
+                              columnStyles: {
+                                0: { cellWidth: 24 },
+                                1: { cellWidth: 20 },
+                                2: { cellWidth: "auto" },
+                              },
+                              styles: {
+                                font: "malgun",
+                                fontStyle: "normal",
+                              },
+                              didDrawPage: function (data) {
+                                doc.setFontSize(18);
+
+                                if (typeof doc.putTotalPages === "function") {
+                                  doc.text("증상일기", data.settings.margin.left, 22);
+
+                                  // 푸터
+                                  let str = "From " + startDate + " to " + endDate;
+                                  if (typeof doc.putTotalPages === "function") {
+                                    str = str + ", Page " + data.pageCount;
+                                  }
+
+                                  let pageSize = doc.internal.pageSize;
+                                  let pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+
+                                  doc.setFontSize(12);
+                                  doc.text(str, data.settings.margin.left, pageHeight - 10);
+                                }
+                              },
+                            });
+
+                            doc.save(`${startDate}-to-${endDate}.pdf`);
+                            exportModal.modal("hide");
+                            showToast("PDF 파일이 생성되었습니다.");
                           });
-
-                        // excel 파일로 저장
-                        let wb = XLSX.utils.book_new();
-                        let ws = XLSX.utils.json_to_sheet(filteredData);
-
-                        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-
-                        let wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
-
-                        function s2ab(s) {
-                          let buf = new ArrayBuffer(s.length);
-                          let view = new Uint8Array(buf);
-                          for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
-                          return buf;
-                        }
-
-                        saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), "text.xlsx");
                       },
                       error: function (error) {
-                        console.log("🚀 ~ file: calendar.html:175 ~ error:", error);
+                        console.log(error);
                       },
                     });
                   });
