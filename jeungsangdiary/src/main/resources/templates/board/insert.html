@@ -13,7 +13,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <h1>게시글 쓰기</h1>
         </div>
-
+        <br>
         <!-- 게시글 입력 -->
         <form action="result"  method="post">
           <table class="table table-striped table-hover">
@@ -37,6 +37,14 @@
                 <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
               </td>
             </tr>
+          <form action="/result"  method="post" enctype="multipart/form-data">
+            <tr>
+              <td style="width: 7.5%" id="content-label">파일</td>
+              <td>
+                  <input type="file" name="file" id="file" class="form-control" multiple="multiple">
+              </td>
+            </tr>
+          </form>
           </table>
           
           <div class="d-flex justify-content-between align-items-center">
