@@ -82,13 +82,28 @@
     <div th:replace="fragments/common :: footer"></div>
     <script type="text/javascript">
       $(document).ready(function () {
+        /** @type {boolean} 이벤트 삽입과 수정 로직에 같은 모달을 쓰는데 구분하기 위한 변수 */
         let isDrop = false;
+
+        /** @type {DateConstructor} toISOString() 사용 시 출력되는 하루 전 날짜를 바로잡는 오프셋 */
         const offset = new Date().getTimezoneOffset() * 60000;
+
+        /** @type {HTMLElement} 캘린더 HTML 요소 */
         const calendarEl = $("#calendar")[0];
+
+        /** @type {HTMLElement} 캘린더의 외부 이벤트 HTML 요소 */
         const draggableEl = $("#draggable")[0];
+
+        /** @type {HTMLElement} 이벤트 삽입 및 수정 모달 HTML 요소 */
         const eventModal = $("#event-modal");
+
+        /** @type {HTMLElement} 캘린더 to PDF 모달 HTML 요소 */
         const exportModal = $("#export-modal");
+
+        /** @type {HTMLElement} 이벤트 삭제 HTML 요소 */
         const trashCan = $("#trash-can");
+
+        /** 풀캘린더 외부 이벤트 생성 객체 */
         const Draggable = FullCalendar.Interaction.Draggable;
 
         /**
@@ -173,6 +188,84 @@
           }
 
           return true;
+        }
+
+        /**
+         * 이벤트 삽입과 수정에 쓰이는 모달 핸들러 함수
+         * @param info 외부 or 캘린터 내부 이벤트 객체
+         */
+        function modalEventHandeler(info) {
+          eventModal
+            .find(".btn-primary")
+            .off()
+            .on("click", function () {
+              let date = eventModal.find("#event-date").val();
+              let contetnt = eventModal.find("#content-text").val();
+
+              if (!validateDateField(date, $("#event-date"), "날짜를 입력해주세요.")) {
+                return;
+              }
+
+              if (!contetnt) {
+                if (confirm("증상 기록없이 저장하시겠습니까?")) {
+                } else {
+                  return;
+                }
+              }
+
+              let data = {
+                postDate: date,
+                content: contetnt,
+              };
+
+              if (isDrop) {
+                // 삽입 로직
+                let categoryId = info.draggedEl.id.replace("category-", "");
+                $.ajax({
+                  url: "/calendar/event/" + categoryId,
+                  method: "POST",
+                  contentType: "application/json",
+                  data: JSON.stringify(data),
+                  success: function (response) {
+                    if (response.success) {
+                      calendar.refetchEvents();
+                      showToast("추가되었습니다.");
+                    } else {
+                      console.log("서버에서 응답이 성공적이지 않았습니다.");
+                    }
+
+                    eventModal.modal("hide");
+                  },
+                  error: function (error) {
+                    console.log("AJAX 요청 에러: ", error);
+                    eventModal.modal("hide");
+                  },
+                });
+              } else {
+                // 수정 로직
+                let cellId = info.event.id;
+                $.ajax({
+                  url: "/calendar/update/" + cellId,
+                  method: "PUT",
+                  contentType: "application/json",
+                  data: JSON.stringify(data),
+                  success: function (response) {
+                    if (response.success) {
+                      calendar.refetchEvents();
+                      showToast("수정되었습니다.");
+                    } else {
+                      console.log("서버에서 응답이 성공적이지 않았습니다.");
+                    }
+
+                    eventModal.modal("hide");
+                  },
+                  error: function (error) {
+                    console.log("AJAX 요청 에러: ", error);
+                    eventModal.modal("hide");
+                  },
+                });
+              }
+            });
         }
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -375,67 +468,6 @@
             modalEventHandeler(info);
           },
         });
-
-        const modalEventHandeler = function (info) {
-          eventModal
-            .find(".btn-primary")
-            .off()
-            .on("click", function () {
-              let date = eventModal.find("#event-date").val();
-              let contetnt = eventModal.find("#content-text").val();
-              let data = {
-                postDate: date,
-                content: contetnt,
-              };
-              if (isDrop) {
-                // 삽입 로직
-                let categoryId = info.draggedEl.id.replace("category-", "");
-                $.ajax({
-                  url: "/calendar/event/" + categoryId,
-                  method: "POST",
-                  contentType: "application/json",
-                  data: JSON.stringify(data),
-                  success: function (response) {
-                    if (response.success) {
-                      calendar.refetchEvents();
-                      showToast("추가되었습니다.");
-                    } else {
-                      console.log("서버에서 응답이 성공적이지 않았습니다.");
-                    }
-
-                    eventModal.modal("hide");
-                  },
-                  error: function (error) {
-                    console.log("AJAX 요청 에러: ", error);
-                    eventModal.modal("hide");
-                  },
-                });
-              } else {
-                // 수정 로직
-                let cellId = info.event.id;
-                $.ajax({
-                  url: "/calendar/update/" + cellId,
-                  method: "PUT",
-                  contentType: "application/json",
-                  data: JSON.stringify(data),
-                  success: function (response) {
-                    if (response.success) {
-                      calendar.refetchEvents();
-                      showToast("수정되었습니다.");
-                    } else {
-                      console.log("서버에서 응답이 성공적이지 않았습니다.");
-                    }
-
-                    eventModal.modal("hide");
-                  },
-                  error: function (error) {
-                    console.log("AJAX 요청 에러: ", error);
-                    eventModal.modal("hide");
-                  },
-                });
-              }
-            });
-        };
 
         new Draggable(draggableEl, {
           itemSelector: ".draggable-item",
