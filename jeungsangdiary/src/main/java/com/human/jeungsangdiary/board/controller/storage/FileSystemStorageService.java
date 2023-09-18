@@ -14,7 +14,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 //  업로드 디렉터리 자원 조회, 파일 저장, 삭제를 수행하는 Service
@@ -29,7 +28,7 @@ public class FileSystemStorageService implements StorageService {
 		this.rootLocation = Paths.get(properties.getLocation());
 	}
 
-	//  MultipartFile 객체를 사용하여 파일을 저장하는 역할
+	// MultipartFile 객체를 사용하여 파일을 저장하는 역할
 	@Override
 	public void store(MultipartFile file) {
 		try {
@@ -54,7 +53,7 @@ public class FileSystemStorageService implements StorageService {
 		}
 	}
 
-	// 
+	// 저장소에 있는 모든 파일의 경로를 스트림으로 반환하는 역할
 	@Override
 	public Stream<Path> loadAll() {
 		try {
@@ -68,11 +67,13 @@ public class FileSystemStorageService implements StorageService {
 
 	}
 
+	// 주어진 파일 이름에 해당하는 파일의 경로를 반환
 	@Override
 	public Path load(String filename) {
 		return rootLocation.resolve(filename);
 	}
 
+	// 주어진 파일 이름에 해당하는 파일을 리소스 형태로 반환
 	@Override
 	public Resource loadAsResource(String filename) {
 		try {
@@ -92,11 +93,13 @@ public class FileSystemStorageService implements StorageService {
 		}
 	}
 
+	// 주어진 파일 이름에 해당하는 파일의 경로를 반환하는 역할
 	@Override
 	public void deleteAll() {
 		FileSystemUtils.deleteRecursively(rootLocation.toFile());
 	}
 
+	// 저장소를 초기화하는 역할
 	@Override
 	public void init() {
 		try {

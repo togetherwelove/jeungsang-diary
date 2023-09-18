@@ -27,6 +27,7 @@ import com.human.jeungsangdiary.board.controller.storage.StorageService;
 @Controller
 public class FileUploadController {
 
+	// StorageService 인터페이스를 구현한 서비스 객체(파일 저장 및 관리 작업)
 	private final StorageService storageService;
 
 	@Autowired
@@ -34,7 +35,8 @@ public class FileUploadController {
 		this.storageService = storageService;
 	}
 
-	@GetMapping("/insert")
+	// 업로드된 파일 목록을 조회하여 모델에 추가하고, "board/result" 뷰를 반환
+	@GetMapping("/result")
 	public String listUploadedFiles(Model model) throws IOException {
 
 		model.addAttribute("files", storageService.loadAll().map(
@@ -45,6 +47,7 @@ public class FileUploadController {
 		return "board/result";
 	}
 
+	// 지정된 파일 이름에 해당하는 파일 리소스를 반환(다운로드 링크나 인라인 표시 등으로 사용)
 	@GetMapping("/files/{filename:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
@@ -54,7 +57,9 @@ public class FileUploadController {
 				"attachment; filename=\"" + file.getFilename() + "\"").body(file);
 	}
 
-	@PostMapping("/insert")
+	// 클라이언트가 전송한 MultipartFile 객체를 받아서 저장소에 저장
+	// 리다이렉션 속성(redirectAttributes)에 메시지 정보를 추가
+	@PostMapping("/result")
 	public String handleFileUpload(@RequestParam("file") MultipartFile file,
 			RedirectAttributes redirectAttributes) {
 
@@ -62,7 +67,7 @@ public class FileUploadController {
 		redirectAttributes.addFlashAttribute("message",
 				"You successfully uploaded " + file.getOriginalFilename() + "!");
 
-		return "redirect:/";
+		return "redirect:/board/result";
 	}
 
 	@ExceptionHandler(StorageFileNotFoundException.class)
