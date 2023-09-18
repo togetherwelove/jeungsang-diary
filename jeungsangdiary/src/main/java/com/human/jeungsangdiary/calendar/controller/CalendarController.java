@@ -51,7 +51,7 @@ public class CalendarController {
         return eventList;
     }
 
-    // 캘린더에서 이벤트를 이동할 때 PUT 요청을 처리
+    // 캘린더에서 이벤트를 이동할 때 PUT 요청을 처리합니다.
     @PutMapping("/event/{id}")
     public ResponseEntity<Map<String, Boolean>> move(@PathVariable("id") Long id, @RequestBody CellVO cell){
         Map<String, Boolean> response = new HashMap<>();
