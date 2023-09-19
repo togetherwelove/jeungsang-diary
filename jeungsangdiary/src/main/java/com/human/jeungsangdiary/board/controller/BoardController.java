@@ -2,15 +2,26 @@ package com.human.jeungsangdiary.board.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.ui.Model;
+import com.human.jeungsangdiary.board.service.BoardService;
+import com.human.jeungsangdiary.board.vo.BoardVO;
+
+import lombok.RequiredArgsConstructor;
+
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
+    private final BoardService boardService;
+
+    @GetMapping("/insert")
+    public String insert() {
+        return "board/insert";
+    }
 
     @GetMapping("/list")
     public String list() {
@@ -27,22 +38,12 @@ public class BoardController {
         return "board/update";
     }
 
-    @GetMapping("/insert")
-    public String insert() {
-        return "board/insert";
-    }
-    
-    @PostMapping("/result")
-    public String result(HttpServletRequest req, Model model) {
-        String title = req.getParameter("title");
-        String writer = req.getParameter("writer");
-        String content = req.getParameter("content");
+    @PostMapping("/list")
+    public String list(@ModelAttribute BoardVO boardVO) {
+        System.out.println("boardVO = " + boardVO);
+        boardService.save(boardVO);
 
-        model.addAttribute("memtitle", title);
-        model.addAttribute("memwriter", writer);
-        model.addAttribute("memcontent", content);
-        
-        return "board/result";
+        return "board/list";
     }
 }
 

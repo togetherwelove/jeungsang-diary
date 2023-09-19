@@ -15,7 +15,7 @@
         </div>
         <br>
         <!-- 게시글 입력 -->
-        <form action="result"  method="post">
+        <form action="list"  method="post">
           <table class="table table-striped table-hover">
             <tr>
               <td style="width: 7.5%" id="title-label">제목</td>
@@ -25,19 +25,12 @@
               </td>
             </tr>
             <tr>
-              <td style="width: 7.5%" id="writer-label">작성자</td>
-              <td>
-                <input type="text" name="writer" id="writer" class="form-control"/>
-                <p id="writer-error" class="error-msg"></p>
-              </td>
-            </tr>
-            <tr>
               <td style="width: 7.5%" id="content-label">내용</td>
               <td>
                 <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
               </td>
             </tr>
-          <form action="/result"  method="post" enctype="multipart/form-data">
+          <form action="list"  method="post" enctype="multipart/form-data">
             <tr>
               <td style="width: 7.5%" id="content-label">파일</td>
               <td>
@@ -52,10 +45,19 @@
               <a href="list" class="btn btn-outline-primary" id="btn-insert">목록</a>
             </div>
             <div>
-              <input type="submit" value="등록" class="btn btn-outline-primary">
+              <input type="submit" value="등록" onclick="insert();" class="btn btn-outline-primary">
             </div>
           </div>
         </form>
+        <script src="js/jquery-3.7.0.min.js"></script>
+        <script>
+          function insert() {
+            alert("게시글이 등록되었습니다");
+            
+            $('#list').submit();
+          }
+        </script>
+
       </div>
     </section>
     <div th:replace="fragments/common :: footer"></div>

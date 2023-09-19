@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jeungsangdiary.board.mapper.BoardMapper">
+    
+    <insert id="setBoardById">
+        INSERT INTO BOARDS (
+                USER_ID,
+                TITLE,
+                CONTENT,
+                HIT,
+                WRITE_DATE
+            ) VALUES (
+                #{userId},
+                #{title}
+                #{content}
+                #{hit}
+                #{writeDate}
+            )
+    </insert>
+</mapper>
