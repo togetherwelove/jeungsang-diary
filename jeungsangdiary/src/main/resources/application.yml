@@ -11,3 +11,7 @@ spring:
     driver-class-name: oracle.jdbc.OracleDriver
     username: human
     password: 123456
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 50MB
