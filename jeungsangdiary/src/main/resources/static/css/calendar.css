@@ -31,7 +31,8 @@
 #trash-can {
   position: absolute;
   width: 52px;
-  left: 225px;
+  top: 95px;
+  left: 175px;
 }
 
 #toast {

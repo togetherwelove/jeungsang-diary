@@ -114,9 +114,9 @@
           let ofs = object.offset();
 
           let x1 = ofs.left;
-          let x2 = ofs.left + trashCan.outerWidth(true);
+          let x2 = ofs.left + object.outerWidth(true);
           let y1 = ofs.top;
-          let y2 = ofs.top + trashCan.outerHeight(true);
+          let y2 = ofs.top + object.outerHeight(true);
 
           return jsEvent.pageX >= x1 && jsEvent.pageX <= x2 && jsEvent.pageY >= y1 && jsEvent.pageY <= y2;
         };
@@ -537,8 +537,8 @@
               error: function (error) {},
             });
           },
-          //외부 이벤트가 Drop 될 때
           drop: (info) => {
+            //외부 이벤트가 Drop 될 때
             let $modal = $("#event-modal");
             let $title = $modal.find(".event-title");
             let $start = $modal.find("#event-date");
