@@ -4,12 +4,6 @@
   pointer-events: none;
 }
 
-.event-hover {
-  border-color: #1a4f8a;
-  background-color: #1a4f8a;
-  color: inherit;
-}
-
 .external-event-hover {
   transform: scale(1.1);
 }
