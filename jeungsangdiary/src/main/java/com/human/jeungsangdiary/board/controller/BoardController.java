@@ -1,48 +1,76 @@
 package com.human.jeungsangdiary.board.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.ui.Model;
+import com.human.jeungsangdiary.board.service.BoardService;
+import com.human.jeungsangdiary.board.vo.Board;
+
 
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 
-    @GetMapping("/list")
-    public String list() {
-        return "board/list";
-    }
+	@Autowired
+	BoardService boardsv;
 
-    @GetMapping("/read")
-    public String read() {
-        return "board/read";
-    }
+	@GetMapping("/insert")
+	    public String insert() {
+	        return "board/insert";
+	    }
 
-    @GetMapping("/update")
-    public String update() {
-        return "board/update";
-    }
+	@GetMapping("/update")
+	    public String update() {
+	        return "board/update";
+	    }
+	
+	@GetMapping("/list")
+	public String list(Model model) throws Exception {
+		
+		List<Board> resultList = boardsv.getBoardList();
+		int result = boardsv.getTotalBoard();
+		
+		model.addAttribute("list", resultList);
+		model.addAttribute("total", result);
+		
+		return "board/list";
+	}
+	
+	@PostMapping("/list")
+	public String list(@ModelAttribute Board board) throws Exception {
+	
+		boardsv.save(board);
+	
+		return "redirect:/board/list";
+	}
 
-    @GetMapping("/insert")
-    public String insert() {
-        return "board/insert";
-    }
-    
-    @PostMapping("/result")
-    public String result(HttpServletRequest req, Model model) {
-        String title = req.getParameter("title");
-        String writer = req.getParameter("writer");
-        String content = req.getParameter("content");
+	// @GetMapping("list")
+	// public String findAll(Model model) throws Exception {
+		
+	// 	List<Board> resultList = boardsv.findAll();
+	
+	// 	model.addAttribute("boardList", resultList);
+	
+	// 	return "board/list";
+	// }
 
-        model.addAttribute("memtitle", title);
-        model.addAttribute("memwriter", writer);
-        model.addAttribute("memcontent", content);
-        
-        return "board/result";
-    }
+	@GetMapping(path="/read", params="unqId")
+	public String read(Model model, int unqId) throws Exception {
+		
+		Board result = boardsv.readBoardOne(unqId);
+		
+		model.addAttribute("board", result);
+		
+		return "board/read";
+	}
+
+
 }
 
