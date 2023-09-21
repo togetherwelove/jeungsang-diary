@@ -16,8 +16,8 @@
         </div>
 
         <div class="modal fade" id="event-modal" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered d-flex" style="max-width: none; right: -25%" role="document">
-            <div class="modal-content w-50">
+          <div class="modal-dialog modal-dialog-centered flex-column" role="document">
+            <div class="modal-content">
               <div class="modal-header">
                 <h5 class="event-title"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -36,7 +36,7 @@
                   <div class="md-3" id="event-file-container">
                     <div class="d-flex mt-1">
                       <input class="form-control img-file" type="file" name="image" accept="image/*" />
-                      <input class="btn btn-success add-btn ms-1" type="button" value="사진 추가" />
+                      <input class="btn btn-success add-btn ms-1" type="button" value="추가" />
                     </div>
                   </div>
                 </form>
@@ -46,7 +46,7 @@
                 <button type="button" class="btn btn-primary submit-btn">저장하기</button>
               </div>
             </div>
-            <div class="d-flex flex-column" id="preview-container"></div>
+            <div class="row" id="preview-container"></div>
           </div>
         </div>
 
@@ -193,21 +193,25 @@
         let originalExportModals = $("#export-modal").clone();
         let originalEventModals = $("#event-modal").clone();
 
-        $(document).on("hidden.bs.modal", "#export-modal", function () {
-          $(this).replaceWith(originalExportModals.clone());
-        });
+        $(document)
+          .off()
+          .on("hidden.bs.modal", "#export-modal", function () {
+            $(this).replaceWith(originalExportModals.clone());
+          });
 
-        $(document).on("hidden.bs.modal", "#event-modal", function () {
-          $(this).replaceWith(originalEventModals.clone());
-        });
+        $(document)
+          .off()
+          .on("hidden.bs.modal", "#event-modal", function () {
+            $(this).replaceWith(originalEventModals.clone());
+          });
 
         $(document).on("shown.bs.modal", "#event-modal", function (e) {
-          $(e.target)
-            .off()
-            .on("click", function (e) {
+          $(e.target).on({
+            click: function (e) {
               let isAddBtn = $(e.target).hasClass("add-btn");
               let isRemoveBtn = $(e.target).hasClass("remove-btn");
               let isfileInput = $(e.target).hasClass("img-file");
+              let isDownloadInput = $(e.target).hasClass("download-btn");
               var elementIndex = $(e.target).parent().index();
 
               let newDiv = $("<div>", { class: "d-flex mt-1" });
@@ -225,7 +229,7 @@
                   if ($(e.target).prevAll(".img-file-text").length) {
                     let id = $(e.target).prevAll(".img-file-text").attr("id");
                     removeFileId.add(id);
-                    if (confirm("정말 삭제하시겠습니까?")) {
+                    if (confirm("정말 삭제하시겠습니까?\n변경 사항을 적용하려면 '저장하기'를 눌러주세요.")) {
                       $(e.target).parent().remove();
                     }
                   } else {
@@ -233,27 +237,53 @@
                   }
                 } else {
                   // 첫째 요소인 경우
-                  $(e.target).prev().val(null);
+                  $(e.target).prev().remove();
+                  $(e.target).before(fileInput);
                   $(e.target).remove();
                 }
               }
 
               if (isfileInput) {
-                $(e.target)
-                  .off()
-                  .on("change", function (e) {
-                    if (elementIndex <= 0 && $(e.target).val()) {
-                      $(e.target).after(removeBtn);
-                    } else if (elementIndex <= 0 && !$(e.target).val()) {
-                      $(e.target).next().remove();
-                    }
+                $(e.target).on("change", function (e) {
+                  if (elementIndex <= 0 && $(e.target).val()) {
+                    $(e.target).after(removeBtn);
+                  } else if (elementIndex <= 0 && !$(e.target).val()) {
+                    $(e.target).next().remove();
+                  }
 
-                    if (elementIndex > 0 && !$(e.target).val()) {
-                      $(e.target).parent().remove();
-                    }
-                  });
+                  if (elementIndex > 0 && !$(e.target).val()) {
+                    $(e.target).parent().remove();
+                  }
+                  let image = e.target.files[0];
+                  let reader = new FileReader();
+
+                  reader.onloadend = () => {
+                    $(e.target).attr("data-bs-title", '<img class="w-100" src="' + reader.result + '"/>');
+                    $(e.target).attr("data-bs-custom-class", "custom-tooltip");
+                    $(e.target).attr("data-bs-placement", "left");
+                    $(e.target).tooltip({ html: true });
+                  };
+                  if (image) {
+                    reader.readAsDataURL(image);
+                  }
+                });
               }
-            });
+
+              if (isDownloadInput) {
+                let imgId = $(e.target).prev().attr("id");
+
+                $.getJSON("/files/download/" + imgId, function (data) {
+                  let link = document.createElement("a");
+                  link.href = "data:image/*;base64," + data.imageData;
+                  link.download = data.originName;
+
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                });
+              }
+            },
+          });
         });
 
         //#endregion
@@ -394,7 +424,6 @@
             let $content = $modal.find("#event-content");
 
             let id = info.event.id;
-            console.log("🚀 ~ file: calendar.html:374 ~ id:", id);
             let title = info.event.title;
             let start = new Date(info.event.start.getTime() - offset).toISOString().split("T")[0];
             let content = info.event.extendedProps.content;
@@ -405,9 +434,12 @@
 
             $.getJSON("/event/" + id + "/files", function (data) {
               $.each(data, function (index, file) {
-                console.log("🚀 ~ file: calendar.html:405 ~ file.unqId:", file.unqId);
                 let inputDiv = $("<div>", { class: "d-flex mt-1" });
                 let textInput = $("<input>", { class: "form-control img-file-text", id: file.unqId, type: "text", readonly: true, value: file.originName });
+                $(textInput).attr("data-bs-title", '<img class="w-100" src="data:image/*;base64,' + file.imageData + '"/>');
+                $(textInput).attr("data-bs-custom-class", "custom-tooltip");
+                $(textInput).attr("data-bs-placement", "left");
+                $(textInput).tooltip({ html: true });
                 let removeBtn = $("<input>", { class: "btn btn-danger remove-btn ms-1", type: "button", value: "삭제" });
                 let downloadBtn = $("<input>", { class: "btn btn-secondary download-btn ms-1", type: "button", value: "다운로드" });
 
@@ -416,76 +448,62 @@
                 inputDiv.append(removeBtn);
 
                 $("#event-file-container").append(inputDiv);
-
-                //이미지 미리보기
-                let modalContent = $("<div>", { class: "modal-content w-50 d-block text-center" });
-                let modalBody = $("<div>", { class: "modal-body" });
-                let img = $("<img>", { class: "mw-100", src: "data:image/*;base64," + file.imageData });
-                let span = $("<span>").text(file.originName);
-                modalBody.append(img);
-                modalBody.append(span);
-                modalContent.append(modalBody);
-
-                $modal.find("#preview-container").append(modalContent);
               });
             });
 
             $modal.modal("show");
 
-            $modal
-              .find(".submit-btn")
-              .off()
-              .on("click", (e) => {
-                if (!validateDateField($start, "날짜를 입력해주세요.")) {
+            $(document).on("click", ".submit-btn", function (e) {
+              if (!validateDateField($start, "날짜를 입력해주세요.")) {
+                return;
+              }
+              if (!$content.val()) {
+                if (!confirm("증상 기록 없이 저장하시겠습니까?")) {
                   return;
                 }
-                if (!$content.val()) {
-                  if (!confirm("증상 기록 없이 저장하시겠습니까?")) {
-                    return;
-                  }
+              }
+
+              let data = new FormData();
+              data.append("postDate", $start.val());
+              data.append("content", $content.val());
+
+              let imageFileInputs = $(".img-file");
+
+              for (let i = 0; i < imageFileInputs.length; i++) {
+                let file = imageFileInputs[i].files[0];
+                if (file) {
+                  data.append("files", file);
                 }
+              }
 
-                let data = new FormData();
-                data.append("postDate", $start.val());
-                data.append("content", $content.val());
+              let removeFileIds = removeFileId.getAll();
+              for (let i = 0; i < removeFileIds.length; i++) {
+                data.append("removeFileIds", removeFileIds[i]);
+              }
 
-                let imageFileInputs = $(".img-file");
-
-                for (let i = 0; i < imageFileInputs.length; i++) {
-                  let file = imageFileInputs[i].files[0];
-                  if (file) {
-                    data.append("files", file);
-                  }
-                }
-
-                let removeFileIds = removeFileId.getAll();
-                for (let i = 0; i < removeFileIds.length; i++) {
-                  data.append("removeFileIds", removeFileIds[i]);
-                }
-
-                $.ajax({
-                  url: "/calendar/update/" + id,
-                  method: "PUT",
-                  processData: false,
-                  contentType: false,
-                  data: data,
-                  success: (response) => {
-                    if (response.success) {
-                      calendar.refetchEvents();
-                      $modal.modal("hide");
-                      showToast("수정이 완료되었습니다.");
-                    } else {
-                      $modal.modal("hide");
-                      showToast("서버에서 오류가 발생했습니다.");
-                    }
-                  },
-                  error: (error) => {
+              $.ajax({
+                url: "/calendar/update/" + id,
+                method: "PUT",
+                processData: false,
+                contentType: false,
+                data: data,
+                success: (response) => {
+                  if (response.success) {
                     calendar.refetchEvents();
                     $modal.modal("hide");
-                    showToast("수정 요청 오류가 발생했습니다.");
-                  },
-                });
+                    showToast("수정이 완료되었습니다.");
+                  } else {
+                    $modal.modal("hide");
+                    showToast("서버에서 오류가 발생했습니다.");
+                  }
+                },
+                error: (error) => {
+                  calendar.refetchEvents();
+                  $modal.modal("hide");
+                  showToast("수정 요청 오류가 발생했습니다.");
+                },
               });
+            });
           },
           eventMouseEnter: function (info) {},
           eventMouseLeave: function (info) {},

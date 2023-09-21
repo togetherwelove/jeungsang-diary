@@ -8,6 +8,10 @@
   transform: scale(1.1);
 }
 
+.custom-tooltip {
+  --bs-tooltip-bg: rgba(0, 0, 0, 0);
+}
+
 .draggable-item {
   position: relative;
   z-index: 999;
