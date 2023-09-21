@@ -1,5 +1,9 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+=======
+<html lang="en">
+>>>>>>> dac3d0c781bf30a057b413899f0b59da222fe9ec
   <head>
     <div th:replace="fragments/common :: scripts"></div>
     <meta charset="UTF-8" />
@@ -9,68 +13,65 @@
   <body>
     <div th:replace="fragments/common :: header"></div>
     <section class="container">
-        <!-- 제목 영역 -->
-        <div class="d-flex justify-content-between align-items-center">
-          <h1>게시글 읽기</h1>
-        </div>
-        <br>
-  
-        <!-- 게시글 목록 -->
-        <table class="table table-striped table-hover">
+      <!-- 제목 영역 -->
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>게시글 읽기</h1>
+      </div>
+      <br />
 
-          <tr>
-            <td>조회수</td>
-            <td th:text="${board.hit}">조회수</td>
-          </tr>
+      <!-- 게시글 목록 -->
+      <table class="table table-striped table-hover">
+        <tr>
+          <td>조회수</td>
+          <td th:text="${board.hit}">조회수</td>
+        </tr>
 
-          <tr>
-            <td>등록일자</td>
-            <td th:text="${board.writeDate}">등록일자</td>
-          </tr>
+        <tr>
+          <td>등록일자</td>
+          <td th:text="${board.writeDate}">등록일자</td>
+        </tr>
 
-          <tr>
-            <td>글번호</td>
-            <td th:text="${board.unqId}">글번호</td>
-          </tr>
+        <tr>
+          <td>글번호</td>
+          <td th:text="${board.unqId}">글번호</td>
+        </tr>
 
+        <tr>
+          <td>제목</td>
+          <td th:text="${board.title}">제목</td>
+        </tr>
 
-          <tr>
-            <td>제목</td>
-            <td th:text="${board.title}">제목</td>
-          </tr>
+        <tr>
+          <td>작성자</td>
+          <td th:text="${board.userId}">작성자</td>
+        </tr>
 
-          <tr>
-            <td>작성자</td>
-            <td th:text="${board.userId}">작성자</td>
-          </tr>
+        <tr>
+          <td>내용</td>
+          <td th:text="${board.content}">내용</td>
+        </tr>
 
-          <tr>
-            <td>내용</td>
-            <td th:text="${board.content}">내용</td>
-          </tr>
-
-          <tr>
-            <td>파일</td>
-            <td>
-              <ul id="file-list"></ul>
-            </td>
-          </tr>
-
-        </table>
-        <span>
-          <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-update">이전</a>
-          <a href="list" class="btn btn-outline-primary" id="btn-comment-insert">목록</a>
-          <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-update">다음</a>
-        </span>
-        <span style="float: right;">  
-          <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-update">수정</a>
-          <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-delete">삭제</a>
-        </span>
-        <br>
-        <br>
-        <!-- 댓글 목록 -->
-        <div id="comment-list">
-          <!-- <div class="comment-box">
+        <tr>
+          <td>파일</td>
+          <td>
+            <ul id="file-list"></ul>
+          </td>
+        </tr>
+      </table>
+      <span>
+        <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-update">이전</a>
+        <a href="list" class="btn btn-outline-primary" id="btn-comment-insert">목록</a>
+        <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-update">다음</a>
+      </span>
+      <span style="float: right">
+        <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-update">수정</a>
+        <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-delete">삭제</a>
+      </span>
+      <br />
+      <br />
+      <!-- 댓글 목록 -->
+      <div id="comment-list">
+        <!-- <div class="comment-box">
                     <div class="top">
                         <div class="item">
                             <span class="comment-writer">작성자</span>
@@ -90,27 +91,20 @@
                         </div>
                     </div>
                 </div> -->
-        </div>
+      </div>
 
-        <!-- 댓글 입력 -->
-        <div>
-          <h4>댓글 입력</h4>
-          <br>
-            <input type="text" name="writer" id="comment-writer" class="form-control" placeholder="작성자" />
-            <textarea name="content" id="comment-content" cols="60" rows="5" 
-                      placeholder="댓글을 작성해주세요" class="form-control"></textarea>
-        </div>
-        <br>            
-        <div>
-          <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-insert">등록</a>
-        </div>
+      <!-- 댓글 입력 -->
+      <div>
+        <h4>댓글 입력</h4>
+        <br />
+        <input type="text" name="writer" id="comment-writer" class="form-control" placeholder="작성자" />
+        <textarea name="content" id="comment-content" cols="60" rows="5" placeholder="댓글을 작성해주세요" class="form-control"></textarea>
+      </div>
+      <br />
+      <div>
+        <a href="javascript:;" class="btn btn-outline-primary" id="btn-comment-insert">등록</a>
       </div>
     </section>
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="../js/jquery-3.7.0.min.js"></script>
-
     <!-- sweetalert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

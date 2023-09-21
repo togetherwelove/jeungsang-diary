@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <div th:replace="fragments/common :: scripts"></div>
@@ -11,18 +12,30 @@
 	
 	<p th:text="'제목 : ' + ${memtitle}">이름</p>
 	<p th:text="'내용 : ' + ${memcontent}">내용</p>
+=======
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Insert title here</title>
+  </head>
+  <body>
+    <h2>폼값을 컨트롤러에서 처리 후 보여주는 화면</h2>
+>>>>>>> dac3d0c781bf30a057b413899f0b59da222fe9ec
 
-	<div th:if="${message}">
-		<h2 th:text="${message}"/>
-	</div>
+    <p th:text="'제목 : ' + ${memtitle}">이름</p>
+    <p th:text="'내용 : ' + ${memcontent}">내용</p>
 
-	<div>
-		<ul>
-			<li th:each="file : ${files}">
-				<a th:href="${file}" th:text="${file}" />
-			</li>
-		</ul>
-	</div>
+    <div th:if="${message}">
+      <h2 th:text="${message}" />
+    </div>
 
-</body>
+    <div>
+      <ul>
+        <li th:each="file : ${files}">
+          <a th:href="${file}" th:text="${file}" />
+        </li>
+      </ul>
+    </div>
+  </body>
 </html>
