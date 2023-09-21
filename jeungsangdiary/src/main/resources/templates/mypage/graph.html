@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>내 건강 요약</title>
 </head>
-<body>
+<body>  
     <div th:replace="fragments/common :: header"></div>
     <section class="main container">
     <div style="width: 80%; margin: 0 auto;">
+        <!-- 제목 영역 -->
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>내 건강 요약</h1>
+        </div>          
         <canvas id="barChart"></canvas>
     </div>
-    <!-- 제목 영역 -->
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>내 건강 요약 차트</h1>
-    </div>
+
     <script>
         // 막대 그래프 데이터
         var data = {
