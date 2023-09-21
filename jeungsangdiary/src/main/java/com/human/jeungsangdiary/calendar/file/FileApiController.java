@@ -20,4 +20,9 @@ public class FileApiController {
   ) {
     return fileService.findAllFileByCellId(cellId);
   }
+
+  @GetMapping("/files/download/{id}")
+  public FileResponse findById(@PathVariable("id") Long id) {
+    return fileService.findById(id);
+  }
 }
