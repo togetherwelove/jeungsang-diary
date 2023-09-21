@@ -1,56 +1,54 @@
 package com.human.jeungsangdiary.calendar.dao;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.human.jeungsangdiary.calendar.mapper.CategoryCellMapper;
 import com.human.jeungsangdiary.calendar.mapper.CellMapper;
 import com.human.jeungsangdiary.calendar.vo.CellVO;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class CellDAO {
-    
-    @Autowired
-    CellMapper cellMapper;
 
-    @Autowired
-    CategoryCellMapper categoryCellMapper;
+  @Autowired
+  CellMapper cellMapper;
 
-    public List<CellVO> getEvents() {
-        return cellMapper.getEvents();
-    };
+  @Autowired
+  CategoryCellMapper categoryCellMapper;
 
-    public Long getLastInsertId() {
-        return cellMapper.getLastInsertId();
-    }
+  public List<CellVO> getEvents() {
+    return cellMapper.getEvents();
+  }
 
-    public void addEvent(CellVO cell) {
-        cellMapper.addEvent(cell);
-    }
+  public Long getLastInsertId() {
+    return cellMapper.getLastInsertId();
+  }
 
-    public void deleteById(Long id) {
-        cellMapper.deleteById(id);
-    }
+  public void addEvent(CellVO cell) {
+    cellMapper.addEvent(cell);
+  }
 
-    public CellVO getEventById(Long cellId) {
-        return cellMapper.getEventById(cellId);
-    }
+  public void deleteById(Long id) {
+    cellMapper.deleteById(id);
+  }
 
-    public void setCategoryByEventId(Long categoryId, Long insertedEventId) {
-        categoryCellMapper.setCategoryByEventId(categoryId, insertedEventId);
-    }
+  public CellVO getEventById(Long cellId) {
+    return cellMapper.getEventById(cellId);
+  }
 
-    public Long getNextId() {
-        return cellMapper.getNextId();
-    }
+  public void setCategoryByEventId(Long categoryId, Long insertedEventId) {
+    categoryCellMapper.setCategoryByEventId(categoryId, insertedEventId);
+  }
 
-    public void moveEvnet(Long id, String postDate) {
-        cellMapper.moveEvent(id, postDate);
-    }
+  public Long getNextId() {
+    return cellMapper.getNextId();
+  }
 
-    public void updateEvent(CellVO existingCell) {
-        cellMapper.updateEvent(existingCell);
-    };
+  public void moveEvnet(Long id, String postDate) {
+    cellMapper.moveEvent(id, postDate);
+  }
+
+  public void updateEvent(CellVO existingCell) {
+    cellMapper.updateEvent(existingCell);
+  }
 }
