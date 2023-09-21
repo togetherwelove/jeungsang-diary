@@ -26,7 +26,7 @@
 	</select>
 
     <!-- 게시글 쓰기 -->
-    <insert id="insertBoardList">
+    <insert id="insertBoard">
         INSERT INTO boards (
                             USER_ID,
                             TITLE,
@@ -46,5 +46,10 @@
     <update id="updateBoardHit">
 		UPDATE boards SET hit=hit+1 WHERE UNQ_ID = #{UNQ_ID}
 	</update>
+
+    <!-- 게시글 삭제 -->
+	<delete id="deleteBoardOne">
+		DELETE FROM boards WHERE UNQ_ID = #{UNQ_ID}
+	</delete>
 
 </mapper>
