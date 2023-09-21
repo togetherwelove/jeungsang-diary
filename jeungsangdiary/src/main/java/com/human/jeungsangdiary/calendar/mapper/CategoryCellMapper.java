@@ -5,5 +5,8 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface CategoryCellMapper {
-    void setCategoryByEventId(@Param("categoryId") Long categoryId, @Param("insertedEventId") Long insertedEventId);
+  void setCategoryByEventId(
+    @Param("categoryId") Long categoryId,
+    @Param("insertedEventId") Long insertedEventId
+  );
 }

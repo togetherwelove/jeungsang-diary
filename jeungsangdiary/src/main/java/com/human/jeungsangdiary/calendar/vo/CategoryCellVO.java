@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class CategoryCellVO {
-    private Long cellId;
-    private Long categoryId;
+
+  private Long cellId;
+  private Long categoryId;
 }
