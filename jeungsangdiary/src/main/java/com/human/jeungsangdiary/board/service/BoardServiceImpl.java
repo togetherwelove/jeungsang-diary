@@ -31,25 +31,25 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public Board readBoardOne(int UNQ_ID) throws Exception {
+	public Board readBoardOne(int unqId) throws Exception {
 		// TODO Auto-generated method stub
-		Board rst = boardmapper.selectBoardOne(UNQ_ID);
+		Board rst = boardmapper.selectBoardOne(unqId);
 		
 		return rst;
 	}
 
 	@Override
-	public int incBoardHit(int UNQ_ID) throws Exception {
+	public int incBoardHit(int unqId) throws Exception {
 		// TODO Auto-generated method stub
-		int rst = boardmapper.updateBoardHit(UNQ_ID);
+		int rst = boardmapper.updateBoardHit(unqId);
 		
 		return rst;
 	}
 
 	@Override
-	public int removeBoard(int UNQ_ID) throws Exception {
+	public int removeBoard(int unqId) throws Exception {
 		// TODO Auto-generated method stub
-		int rst = boardmapper.deleteBoardOne(UNQ_ID);
+		int rst = boardmapper.deleteBoardOne(unqId);
 		
 		return rst;
 	}

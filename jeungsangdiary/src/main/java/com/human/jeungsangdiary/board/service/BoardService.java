@@ -13,13 +13,13 @@ public interface BoardService {
 	public int getTotalBoard() throws Exception;
 	
 	// 게시글 읽기
-	public Board readBoardOne(int no) throws Exception;
+	public Board readBoardOne(int unqId) throws Exception;
 
 	// 조회수 업데이트
-	public int incBoardHit(int no) throws Exception;
+	public int incBoardHit(int unqId) throws Exception;
 
 	// 게시글 삭제
-	public int removeBoard(int no) throws Exception;
+	public int removeBoard(int unqId) throws Exception;
 	
 	// 게시글 등록
 	public int regBoard(Board board) throws Exception;

@@ -13,11 +13,11 @@ public interface BoardMapper {
 	
 	public int selectTotalBoard() throws Exception;
 	
-	public Board selectBoardOne(int no) throws Exception;
+	public Board selectBoardOne(int unqId) throws Exception;
 
-    public int updateBoardHit(int no) throws Exception;
+    public int updateBoardHit(int unqId) throws Exception;
 	
-	public int deleteBoardOne(int no) throws Exception;
+	public int deleteBoardOne(int unqId) throws Exception;
 	
 	public int insertBoard(Board board) throws Exception;
     
