@@ -4,16 +4,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.human.jeungsangdiary.board.vo.BoardVO;
+import com.human.jeungsangdiary.board.vo.Board;
 
 
 @Repository
 public class BoardDAO {
 
-    public List<BoardVO> getBoards() {
+    public List<Board> getBoards() {
         return null;
     }
-    
-  
 
 }

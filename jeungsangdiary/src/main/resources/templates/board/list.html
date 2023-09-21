@@ -19,12 +19,21 @@
       <table class="table table-striped table-hover">
         <thead>
           <tr class="text-center">
-            <td style="width: 7.5%" id="num">번호</td>
-            <td style="width: 65%" id="title">제목</td>
-            <td style="width: 10%" id="writer">작성자</td>
-            <td style="width: 10%" id="date">등록일자</td>
-            <td style="width: 7.5%" id="view">조회수</td>
+            <td style="width: 7.5%" id="unqId">번호</td>
+            <td style="width: 60%" id="title">제목</td>
+            <td style="width: 10%" id="userId">작성자</td>
+            <td style="width: 15%" id="writeDate">등록일자</td>
+            <td style="width: 7.5%" id="hit">조회수</td>
           </tr>
+
+          <tr class="text-center" th:each="board:${list}">
+            <td style="width: 7.5%" id="unqId" th:text="${board.unqId}">번호</td>
+            <td style="width: 60%" id="title"><a th:href="|read?unqId=${board.unqId}|" th:text="${board.title}">제목</td>
+            <td style="width: 10%" id="userId" th:text="${board.userId}">작성자</td>
+            <td style="width: 15%" id="writeDate" th:text="${board.writeDate}">등록일자</td>
+            <td style="width: 7.5%" id="hit" th:text="${board.hit}">조회수</td>
+          </tr>
+
         </thead>
         <tbody id="board-data">
           <tr>

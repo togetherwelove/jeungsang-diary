@@ -2,19 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.human.jeungsangdiary.board.mapper.BoardMapper">
     
-    <insert id="setBoardById">
-        INSERT INTO BOARDS (
-                USER_ID,
-                TITLE,
-                CONTENT,
-                HIT,
-                WRITE_DATE
-            ) VALUES (
-                #{userId},
-                #{title}
-                #{content}
-                #{hit}
-                #{writeDate}
-            )
+    <!-- 게시글 목록 -->
+    <select id="selectBoardList" resultType="com.human.jeungsangdiary.board.vo.Board">
+        SELECT 
+            UNQ_ID as unqId,
+            USER_ID as userId,
+            TITLE,
+            HIT,
+            TO_CHAR(WRITE_DATE, 'yyyy-MM-dd') as writeDate
+        FROM
+            boards
+        ORDER BY unqId DESC
+    </select>
+
+    <!-- 게시글 총갯수 -->
+	<select id="selectTotalBoard" resultType="int">
+		SELECT COUNT(*) FROM boards
+	</select>
+	
+	<!-- 게시글 읽기 -->
+	<select id="selectBoardOne" resultType="com.human.jeungsangdiary.board.vo.Board">
+		SELECT * FROM boards WHERE UNQ_ID = #{UNQ_ID}
+	</select>
+
+    <!-- 게시글 쓰기 -->
+    <insert id="insertBoardList">
+        INSERT INTO boards (
+                            USER_ID,
+                            TITLE,
+                            CONTENT,
+                            HIT,
+                            WRITE_DATE
+                        ) VALUES (
+                            #{userId},
+                            #{title},
+                            #{content},
+                            #{hit},
+                            #{writeDate}
+                        )
     </insert>
+
 </mapper>

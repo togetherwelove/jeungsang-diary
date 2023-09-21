@@ -1,49 +1,76 @@
 package com.human.jeungsangdiary.board.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.human.jeungsangdiary.board.service.BoardService;
-import com.human.jeungsangdiary.board.vo.BoardVO;
-
-import lombok.RequiredArgsConstructor;
+import com.human.jeungsangdiary.board.vo.Board;
 
 
 @Controller
-@RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
-    private final BoardService boardService;
 
-    @GetMapping("/insert")
-    public String insert() {
-        return "board/insert";
-    }
+	@Autowired
+	BoardService boardsv;
 
-    @GetMapping("/list")
-    public String list() {
-        return "board/list";
-    }
+	@GetMapping("/insert")
+	    public String insert() {
+	        return "board/insert";
+	    }
 
-    @GetMapping("/read")
-    public String read() {
-        return "board/read";
-    }
+	@GetMapping("/update")
+	    public String update() {
+	        return "board/update";
+	    }
+	
+	@GetMapping("/list")
+	public String list(Model model) throws Exception {
+		
+		List<Board> resultList = boardsv.getBoardList();
+		int result = boardsv.getTotalBoard();
+		
+		model.addAttribute("list", resultList);
+		model.addAttribute("total", result);
+		
+		return "board/list";
+	}
+	
+	@PostMapping("/list")
+	public String list(@ModelAttribute Board board) throws Exception {
+	
+		boardsv.save(board);
+	
+		return "redirect:/board/list";
+	}
 
-    @GetMapping("/update")
-    public String update() {
-        return "board/update";
-    }
+	// @GetMapping("list")
+	// public String findAll(Model model) throws Exception {
+		
+	// 	List<Board> resultList = boardsv.findAll();
+	
+	// 	model.addAttribute("boardList", resultList);
+	
+	// 	return "board/list";
+	// }
 
-    @PostMapping("/list")
-    public String list(@ModelAttribute BoardVO boardVO) {
-        System.out.println("boardVO = " + boardVO);
-        boardService.save(boardVO);
+	@GetMapping(path="/read", params="unqId")
+	public String read(Model model, int unqId) throws Exception {
+		
+		Board result = boardsv.readBoardOne(unqId);
+		
+		model.addAttribute("board", result);
+		
+		return "board/read";
+	}
 
-        return "board/list";
-    }
+
 }
 
