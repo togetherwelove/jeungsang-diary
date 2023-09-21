@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jeungsangdiary.calendar.file.FileMapper">
+<resultMap id="FileResultMap" type="com.human.jeungsangdiary.calendar.file.FileResponse">
+    <result property="unqId" column="unq_id"/>
+    <result property="cellId" column="cell_id"/>
+    <result property="originName" column="origin_name"/>
+    <result property="imageData" column="image_data"/>
+    <result property="imgSize" column="img_size"/>
+</resultMap>
+
+<!-- IMG_FILES 테이블 전체 컬럼 -->
+<sql id="imagesColumns">
+    cell_id,
+    origin_name,
+    image_data,
+    img_size
+</sql>
+
+<!-- 파일 추가 -->
+<insert id="saveAll" parameterType="list">
+    INSERT ALL
+    <foreach collection="list" item="file">
+    INTO IMAGES (
+        <include refid="imagesColumns" />
+    ) VALUES (
+        #{file.cellId},
+        #{file.originName},
+        #{file.imageData},
+        #{file.imgSize}
+    )
+    </foreach>
+    SELECT * FROM DUAL
+</insert>
+
+<!-- 파일 리스트 조회 -->
+<select id="findAllByCellId" resultMap="FileResultMap" parameterType="long" resultType="com.human.jeungsangdiary.calendar.file.FileResponse">
+    SELECT
+        unq_id,
+        <include refid="imagesColumns" />
+    FROM
+        IMAGES
+    WHERE
+        delete_yn = 'N'
+    AND cell_id = #{cellId}
+    ORDER BY
+        unq_id
+</select>
+
+<delete id="deleteAllByIds" parameterType="list">
+    UPDATE IMAGES
+    SET
+        delete_yn = 'Y',
+        delete_date = SYSDATE
+    WHERE
+        unq_id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+        #{id}
+        </foreach>
+</delete>
+
+<select id="findById" parameterType="long" resultMap="FileResultMap" resultType="com.human.jeungsangdiary.calendar.file.FileResponse">
+    SELECT
+        unq_id,
+        <include refid="imagesColumns" />
+    FROM
+        IMAGES
+    WHERE
+        delete_yn = 'N'
+    AND unq_id = #{id}
+</select>
+
+</mapper>

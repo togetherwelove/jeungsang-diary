@@ -1,14 +1,14 @@
 {
-  "configurations": [
-    {
-      "type": "java",
-      "name": "Spring Boot-JeungsangdiaryApplication<jeungsangdiary>",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "mainClass": "com.human.jeungsangdiary.JeungsangdiaryApplication",
-      "projectName": "jeungsangdiary",
-      "args": "",
-      "envFile": "${workspaceFolder}/.env"
-    }
-  ]
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-JeungsangdiaryApplication<jeungsangdiary>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.human.jeungsangdiary.JeungsangdiaryApplication",
+            "projectName": "jeungsangdiary",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
 }
