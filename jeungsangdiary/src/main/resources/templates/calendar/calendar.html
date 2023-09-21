@@ -25,7 +25,7 @@
         </div>
 
         <div class="modal fade" id="event-modal" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered flex-column" role="document">
+          <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="event-title"></h5>
@@ -33,18 +33,18 @@
               </div>
               <div class="modal-body">
                 <form enctype="multipart/form-data">
-                  <label class="col-form-label" for="event-date">날짜</label>
+                  <label class="col-form-label">날짜</label>
                   <div class="md-3">
-                    <input class="form-control" id="event-date" type="date" />
+                    <input class="form-control event-date" type="date" />
                   </div>
-                  <label class="col-form-label" for="event-content">증상</label>
+                  <label class="col-form-label">증상</label>
                   <div class="md-3">
-                    <textarea class="form-control" id="event-content"></textarea>
+                    <textarea class="form-control event-content"></textarea>
                   </div>
                   <label class="col-form-label">사진</label>
-                  <div class="md-3" id="event-file-container">
+                  <div class="md-3 event-file-container">
                     <div class="d-flex mt-1">
-                      <input class="form-control img-file" type="file" name="image" accept="image/*" />
+                      <input class="form-control file-input" type="file" name="image" accept="image/*" />
                       <input class="btn btn-success add-btn ms-1" type="button" value="추가" />
                     </div>
                   </div>
@@ -69,12 +69,12 @@
               <div class="modal-body">
                 <form>
                   <div class="md-3">
-                    <label for="export-date-start" class="col-form-label">시작 날짜</label>
-                    <input type="date" class="form-control" id="export-date-start" />
+                    <label class="col-form-label">시작 날짜</label>
+                    <input type="date" class="form-control start-date" />
                   </div>
                   <div class="md-3">
-                    <label for="export-date-end" class="col-form-label">끝 날짜</label>
-                    <input type="date" class="form-control" id="export-date-end" />
+                    <label class="col-form-label">끝 날짜</label>
+                    <input type="date" class="form-control end-date" />
                   </div>
                 </form>
               </div>
@@ -199,100 +199,83 @@
           return true;
         }
 
-        let originalExportModals = $("#export-modal").clone();
-        let originalEventModals = $("#event-modal").clone();
+        /**
+         * 삽입 및 수정 로직
+         */
+        function eventSubmit(modal, id, start, content, insert) {
+          if (!validateDateField(start, "날짜를 입력해주세요.")) {
+            return;
+          }
+          if (!content.val()) {
+            if (!confirm("증상 기록 없이 저장하시겠습니까?")) {
+              return;
+            }
+          }
+          let data = new FormData();
+          data.append("postDate", start.val());
+          data.append("content", content.val());
 
-        $(document)
-          .off()
-          .on("hidden.bs.modal", "#export-modal", function () {
-            $(this).replaceWith(originalExportModals.clone());
-          });
+          let imageFileInputs = $(".file-input");
 
-        $(document)
-          .off()
-          .on("hidden.bs.modal", "#event-modal", function () {
-            $(this).replaceWith(originalEventModals.clone());
-          });
+          for (let i = 0; i < imageFileInputs.length; i++) {
+            let file = imageFileInputs[i].files[0];
+            if (file) {
+              data.append("files", file);
+            }
+          }
 
-        $(document).on("shown.bs.modal", "#event-modal", function (e) {
-          $(e.target).on({
-            click: function (e) {
-              let isAddBtn = $(e.target).hasClass("add-btn");
-              let isRemoveBtn = $(e.target).hasClass("remove-btn");
-              let isfileInput = $(e.target).hasClass("img-file");
-              let isDownloadInput = $(e.target).hasClass("download-btn");
-              var elementIndex = $(e.target).parent().index();
+          let removeFileIds = removeFileId.getAll();
+          for (let i = 0; i < removeFileIds.length; i++) {
+            data.append("removeFileIds", removeFileIds[i]);
+          }
 
-              let newDiv = $("<div>", { class: "d-flex mt-1" });
-              let fileInput = $("<input>", { class: "form-control img-file", type: "file", name: "image", accept: "image/*" });
-              let removeBtn = $("<input>", { class: "btn btn-danger remove-btn ms-1", type: "button", value: "삭제" });
-
-              if (isAddBtn) {
-                newDiv.append(fileInput);
-                newDiv.append(removeBtn);
-                $(e.target).closest(".md-3").append(newDiv);
-              }
-
-              if (isRemoveBtn) {
-                if (elementIndex > 0) {
-                  if ($(e.target).prevAll(".img-file-text").length) {
-                    let id = $(e.target).prevAll(".img-file-text").attr("id");
-                    removeFileId.add(id);
-                    if (confirm("정말 삭제하시겠습니까?\n변경 사항을 적용하려면 '저장하기'를 눌러주세요.")) {
-                      $(e.target).parent().remove();
-                    }
-                  } else {
-                    $(e.target).parent().remove();
-                  }
-                } else {
-                  // 첫째 요소인 경우
-                  $(e.target).prev().remove();
-                  $(e.target).before(fileInput);
-                  $(e.target).remove();
-                }
-              }
-
-              if (isfileInput) {
-                $(e.target).on("change", function (e) {
-                  if (elementIndex <= 0 && $(e.target).val()) {
-                    $(e.target).after(removeBtn);
-                  } else if (elementIndex <= 0 && !$(e.target).val()) {
-                    $(e.target).next().remove();
-                  }
-
-                  if (elementIndex > 0 && !$(e.target).val()) {
-                    $(e.target).parent().remove();
-                  }
-                  let image = e.target.files[0];
-                  let reader = new FileReader();
-
-                  reader.onloadend = () => {
-                    $(e.target).attr("data-bs-title", '<img class="w-100" src="' + reader.result + '"/>');
-                    $(e.target).attr("data-bs-custom-class", "custom-tooltip");
-                    $(e.target).attr("data-bs-placement", "left");
-                    $(e.target).tooltip({ html: true });
-                  };
-                  if (image) {
-                    reader.readAsDataURL(image);
-                  }
-                });
-              }
-
-              if (isDownloadInput) {
-                let imgId = $(e.target).prev().attr("id");
-
-                $.getJSON("/files/download/" + imgId, function (data) {
-                  let link = document.createElement("a");
-                  link.href = "data:image/*;base64," + data.imageData;
-                  link.download = data.originName;
-
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                });
+          $.ajax({
+            url: insert ? "/calendar/event/" + id : "/calendar/update/" + id,
+            method: insert ? "POST" : "PUT",
+            processData: false,
+            contentType: false,
+            data: data,
+            success: (response) => {
+              if (response.success) {
+                calendar.refetchEvents();
+                modal.modal("hide");
+                showToast("완료되었습니다.");
+              } else {
+                modal.modal("hide");
+                showToast("서버에서 오류가 발생했습니다.");
               }
             },
+            error: (error) => {
+              calendar.refetchEvents();
+              modal.modal("hide");
+              showToast("요청 오류가 발생했습니다.");
+            },
           });
+        }
+
+        let originExportModal = $("#export-modal").clone();
+        let originEventModal = $("#event-modal").clone();
+
+        $(document).on("hide.bs.modal", "#export-modal", function (e) {
+          console.log("🚀 ~ export-modal hide.bs.modal");
+          $(this).replaceWith(originExportModal.clone());
+        });
+
+        $(document).on("hide.bs.modal", "#event-modal", function (e) {
+          console.log("🚀 ~ event-modal hide.bs.modal");
+          $(this).replaceWith(originEventModal.clone());
+        });
+
+        $(document).on("hidden.bs.modal", "#event-modal", function (e) {
+          console.log("🚀 ~ event-modal hidden.bs.modal:");
+        });
+
+        $(document).on("show.bs.modal", "#event-modal", function (e) {
+          console.log("🚀 ~ event-modal show.bs.modal");
+        });
+
+        $(document).on("shown.bs.modal", "#event-modal", function (e) {
+          console.log("🚀 ~ event-modal shown.bs.modal");
         });
 
         //#endregion
@@ -330,188 +313,189 @@
               text: "출력하기",
               click: function () {
                 let today = new Date().toISOString().split("T")[0];
-                let $modal = $("#export-modal");
-                let startDate = $modal.find("#export-date-start");
-                let endDate = $modal.find("#export-date-end");
-                endDate.val(today);
-                $modal.modal("show");
-                $modal
-                  .find(".export-btn")
-                  .off()
-                  .on("click", (e) => {
-                    if (!validateDateField(startDate, "날짜를 입력해주세요.")) {
-                      return;
-                    }
-                    if (!validateDateField(endDate, "날짜를 입력해주세요.")) {
-                      return;
-                    }
+                let modal = new bootstrap.Modal($("#export-modal"));
 
-                    // jsPDF 라이브러리
-                    $.ajax({
-                      url: "/calendar/event",
-                      method: "GET",
-                      success: function (ajaxData) {
-                        let filteredData = ajaxData.filter(function (item) {
-                          let itemDate = new Date(item.start);
-                          return itemDate >= new Date(startDate.val()) && itemDate <= new Date(endDate.val());
-                        });
+                $(modal._element).on("shown.bs.modal", function (e) {
+                  $(e.target).on("click", ".export-btn", () => {
+                    let startDate = $(this).find(".start-date");
+                    let endDate = $(this).find(".end-date");
+                    if (!validateDateField(startDate, "날짜를 입력해주세요.")) return;
+                    if (!validateDateField(endDate, "날짜를 입력해주세요.")) return;
 
-                        // 날짜를 내림차순으로 정렬
-                        filteredData.sort((a, b) => new Date(b.start) - new Date(a.start));
+                    // jsPDF
+                    $.getJSON("/calendar/event", function (data) {
+                      // startDate부터 endDate 사이의 날짜로 필터링
+                      let filteredData = data.filter(function (item) {
+                        let date = new Date(item.start);
+                        return date >= new Date(startDate.val()) && date <= new Date(endDate.val());
+                      });
 
-                        const doc = new jspdf.jsPDF("p", "mm", "a4");
+                      // 필터링된 날짜를 내림차순으로 정렬
+                      filteredData.sort((a, b) => new Date(b.start) - new Date(a.start));
 
-                        // 폰트 읽어오기
-                        fetch("/font/malgun.txt")
-                          .then((data) => data.text())
-                          .then((text) => {
-                            doc.addFileToVFS("malgun.ttf", text);
-                            doc.addFont("malgun.ttf", "malgun", "normal");
-                            doc.setFont("malgun");
+                      // jsPDF 생성
+                      const doc = new jspdf.jsPDF("p", "mm", "a4");
 
-                            let columns = ["날짜", "대분류", "증상"];
+                      // 폰트 읽어오기
+                      fetch("/font/malgun.txt")
+                        .then((data) => data.text())
+                        .then((text) => {
+                          doc.addFileToVFS("malgun.ttf", text);
+                          doc.addFont("malgun.ttf", "malgun", "normal");
+                          doc.setFont("malgun");
 
-                            // 필터링 된 데이터로 행 생성하기
-                            let rows = filteredData.map(function (item) {
-                              return [item.start, item.title, item.content];
-                            });
+                          let columns = ["날짜", "대분류", "증상"];
 
-                            // 테이블 생성
-                            doc.autoTable({
-                              theme: "grid",
-                              startY: 30,
-                              head: [columns],
-                              body: rows,
-                              columnStyles: {
-                                0: { cellWidth: 24 },
-                                1: { cellWidth: 20 },
-                                2: { cellWidth: "auto" },
-                              },
-                              styles: {
-                                font: "malgun",
-                                fontStyle: "normal",
-                              },
-                              didDrawPage: function (data) {
-                                doc.setFontSize(18);
-
-                                if (typeof doc.putTotalPages === "function") {
-                                  doc.text("증상일기", data.settings.margin.left, 22);
-
-                                  // 푸터
-                                  let str = "From " + startDate.val() + " to " + endDate.val();
-                                  if (typeof doc.putTotalPages === "function") {
-                                    str = str + ", Page " + data.pageCount;
-                                  }
-
-                                  let pageSize = doc.internal.pageSize;
-                                  let pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-
-                                  doc.setFontSize(12);
-                                  doc.text(str, data.settings.margin.left, pageHeight - 10);
-                                }
-                              },
-                            });
-
-                            // 저장
-                            doc.save(`${startDate.val()}-to-${endDate.val()}.pdf`);
+                          // 필터링 된 데이터로 행 생성하기
+                          let rows = filteredData.map(function (item) {
+                            return [item.start, item.title, item.content];
                           });
-                      },
-                      error: function (error) {
-                        console.log(error);
-                      },
+
+                          // 테이블 생성
+                          doc.autoTable({
+                            theme: "grid",
+                            startY: 30,
+                            head: [columns],
+                            body: rows,
+                            columnStyles: {
+                              0: { cellWidth: 24 },
+                              1: { cellWidth: 20 },
+                              2: { cellWidth: "auto" },
+                            },
+                            styles: {
+                              font: "malgun",
+                              fontStyle: "normal",
+                            },
+                            didDrawPage: function (data) {
+                              doc.setFontSize(18);
+
+                              // 페이지마다 헤더 및 푸터 설정
+                              if (typeof doc.putTotalPages === "function") {
+                                doc.text("증상일기", data.settings.margin.left, 22);
+                                let str = "From " + startDate.val() + " to " + endDate.val();
+                                if (typeof doc.putTotalPages === "function") {
+                                  str = str + ", Page " + data.pageCount;
+                                }
+
+                                let pageSize = doc.internal.pageSize;
+                                let pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+
+                                doc.setFontSize(12);
+                                doc.text(str, data.settings.margin.left, pageHeight - 10);
+                              }
+                            },
+                          });
+
+                          // 저장
+                          doc.save(`${startDate.val()}-to-${endDate.val()}.pdf`);
+                        });
                     });
-                    showToast("PDF 파일이 생성되었습니다.");
-                    $modal.modal("hide");
                   });
+                });
+                modal.show();
               },
             },
           },
+          // EVENT READ
           eventClick: function (info) {
-            let $modal = $("#event-modal");
-            let $title = $modal.find(".event-title");
-            let $start = $modal.find("#event-date");
-            let $content = $modal.find("#event-content");
-
             let id = info.event.id;
-            let title = info.event.title;
-            let start = new Date(info.event.start.getTime() - offset).toISOString().split("T")[0];
-            let content = info.event.extendedProps.content;
 
-            $title.text(title);
-            $start.val(start);
-            $content.val(content);
+            const modal = new bootstrap.Modal($("#event-modal"));
+            // 데이터 가져와서 모달에 넣기
+            $.getJSON("calendar/event/" + id, function (data) {
+              $(modal._element).on("shown.bs.modal", function (e) {
+                $(".event-title").text(data.categoryName);
+                $(".event-date").val(data.postDate);
+                $(".event-content").val(data.content);
 
-            $.getJSON("/event/" + id + "/files", function (data) {
-              $.each(data, function (index, file) {
-                let inputDiv = $("<div>", { class: "d-flex mt-1" });
-                let textInput = $("<input>", { class: "form-control img-file-text", id: file.unqId, type: "text", readonly: true, value: file.originName });
-                $(textInput).attr("data-bs-title", '<img class="w-100" src="data:image/*;base64,' + file.imageData + '"/>');
-                $(textInput).attr("data-bs-custom-class", "custom-tooltip");
-                $(textInput).attr("data-bs-placement", "left");
-                $(textInput).tooltip({ html: true });
-                let removeBtn = $("<input>", { class: "btn btn-danger remove-btn ms-1", type: "button", value: "삭제" });
-                let downloadBtn = $("<input>", { class: "btn btn-secondary download-btn ms-1", type: "button", value: "다운로드" });
+                // TODO 파일 보이게 하기
+                $.getJSON("/event/" + id + "/files", function (data) {
+                  $.each(data, function (index, file) {
+                    $("<div>", { class: "d-flex mt-1" })
+                      .append($("<input>").addClass("form-control file-read-input").attr({ type: "text", readonly: true, value: file.originName, "data-unqid": file.unqId }))
+                      .append($("<input>").addClass("btn btn-secondary download-btn ms-1").attr({ type: "button", value: "다운로드" }))
+                      .append($("<input>").addClass("btn btn-danger remove-btn ms-1").attr({ type: "button", value: "삭제" }))
+                      .appendTo(".event-file-container");
+                  });
 
-                inputDiv.append(textInput);
-                inputDiv.append(downloadBtn);
-                inputDiv.append(removeBtn);
+                  // 파일 다운로드 로직
+                  $(e.target)
+                    .on("click", ".download-btn", function () {
+                      let id = $(this).prevAll(".file-read-input").data("unqid");
 
-                $("#event-file-container").append(inputDiv);
-              });
-            });
+                      $.getJSON("/files/download/" + id, function (data) {
+                        $("<a>", {
+                          href: "data:image/*;base64," + data.imageData,
+                          download: data.originName,
+                        })
+                          .appendTo("body")[0]
+                          .click();
 
-            $modal.modal("show");
+                        $("a[download]").remove();
+                      });
+                    })
+                    .on("click", ".remove-btn", function () {
+                      let id = $(this).prevAll(".file-read-input").data("unqid");
 
-            $(document).on("click", ".submit-btn", function (e) {
-              if (!validateDateField($start, "날짜를 입력해주세요.")) {
-                return;
-              }
-              if (!$content.val()) {
-                if (!confirm("증상 기록 없이 저장하시겠습니까?")) {
-                  return;
-                }
-              }
+                      if (confirm("파일을 삭제하시겠습니까?")) {
+                        removeFileId.add(id);
+                        alert("변경사항을 적용하시려면 '저장하기'를 눌러주세요.");
+                        $(this).parent().remove();
+                      }
+                    });
+                });
 
-              let data = new FormData();
-              data.append("postDate", $start.val());
-              data.append("content", $content.val());
+                // 수정 이벤트 핸들러
+                $(e.target).on("click", ".submit-btn", () => {
+                  if (!validateDateField($(".event-date"), "날짜를 입력해주세요.")) return;
 
-              let imageFileInputs = $(".img-file");
+                  // 데이터 담기
+                  let data = new FormData();
+                  data.append("postDate", $(".event-date").val());
+                  data.append("content", $(".event-content").val());
 
-              for (let i = 0; i < imageFileInputs.length; i++) {
-                let file = imageFileInputs[i].files[0];
-                if (file) {
-                  data.append("files", file);
-                }
-              }
+                  // 파일 처리
+                  let fileInputs = $(".file-input");
 
-              let removeFileIds = removeFileId.getAll();
-              for (let i = 0; i < removeFileIds.length; i++) {
-                data.append("removeFileIds", removeFileIds[i]);
-              }
-
-              $.ajax({
-                url: "/calendar/update/" + id,
-                method: "PUT",
-                processData: false,
-                contentType: false,
-                data: data,
-                success: (response) => {
-                  if (response.success) {
-                    calendar.refetchEvents();
-                    $modal.modal("hide");
-                    showToast("수정이 완료되었습니다.");
-                  } else {
-                    $modal.modal("hide");
-                    showToast("서버에서 오류가 발생했습니다.");
+                  for (let i = 0; i < fileInputs.length; i++) {
+                    let file = fileInputs[i].files[0];
+                    if (file) {
+                      data.append("files", file);
+                    }
                   }
-                },
-                error: (error) => {
-                  calendar.refetchEvents();
-                  $modal.modal("hide");
-                  showToast("수정 요청 오류가 발생했습니다.");
-                },
+
+                  // 파일 삭제 처리
+                  let removeFileIds = removeFileId.getAll();
+
+                  for (let i = 0; i < removeFileIds.length; i++) {
+                    data.append("removeFileIds", removeFileIds[i]);
+                  }
+
+                  $.ajax({
+                    url: "/calendar/update/" + id,
+                    method: "PUT",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: (response) => {
+                      if (response.success) {
+                        calendar.refetchEvents();
+                        modal.hide();
+                        showToast("이벤트가 수정되었습니다.");
+                      } else {
+                        modal.hide();
+                        showToast("서버 오류가 발생했습니다.");
+                      }
+                    },
+                    error: (error) => {
+                      calendar.refetchEvents();
+                      modal.hide();
+                      showToast("전달 및 요청 오류가 발생했습니다.");
+                    },
+                  });
+                });
               });
+              modal.show();
             });
           },
           eventMouseEnter: function (info) {},
@@ -523,20 +507,19 @@
             info.el.classList.remove("event-hover");
             if (isElOverObject(trashCan, info.jsEvent)) {
               if (confirm("정말 삭제하시겠습니까?")) {
-                trashCan.attr("hidden", true);
                 let id = info.event.id;
                 $.ajax({
                   url: "/calendar/delete/" + id,
                   method: "DELETE",
                   success: function (response) {
                     if (response.success) {
-                      info.event.remove();
-                      showToast("삭제되었습니다.");
                       calendar.refetchEvents();
+                      showToast("삭제되었습니다.");
                     }
                   },
                   error: function (error) {
-                    console.log("ajax error");
+                    calendar.refetchEvents();
+                    showToast("전달 및 요청 오류가 발생했습니다.");
                   },
                 });
               }
@@ -547,9 +530,9 @@
             let id = info.event.id;
             let localStart = new Date(info.event.start.getTime() - offset);
             let newStart = localStart.toISOString().split("T")[0];
-            let data = {
-              postDate: newStart,
-            };
+
+            let data = { postDate: newStart };
+
             $.ajax({
               url: "/calendar/event/" + id,
               method: "PUT",
@@ -557,79 +540,116 @@
               data: JSON.stringify(data),
               success: function (response) {
                 if (response.success) {
-                  showToast("날짜가 변경되었습니다.");
                   calendar.refetchEvents();
+                  showToast("날짜가 변경되었습니다.");
                 }
               },
-              error: function (error) {},
+              error: function (error) {
+                calendar.refetchEvents();
+                showToast("전달 및 요청 오류가 발생했습니다.");
+              },
             });
           },
           drop: (info) => {
-            //외부 이벤트가 Drop 될 때
-            let $modal = $("#event-modal");
-            let $title = $modal.find(".event-title");
-            let $start = $modal.find("#event-date");
-            let $content = $modal.find("#event-content");
+            const modal = new bootstrap.Modal($("#event-modal"));
 
-            let id = info.draggedEl.id.replace("category-", "");
-            let title = info.draggedEl.innerText;
-            let date = info.dateStr;
+            $(modal._element).on("shown.bs.modal", function (e) {
+              // 카테고리 id
+              let categoryId = info.draggedEl.id.replace("category-", "");
 
-            $title.text(title);
-            $start.val(date);
+              // 이벤트 날짜
+              let date = info.dateStr;
 
-            $modal.modal("show");
+              // 제목
+              $(".event-title").text("어떻게 아프신가요?");
 
-            $modal
-              .find(".submit-btn")
-              .off()
-              .on("click", (e) => {
-                if (!validateDateField($start, "날짜를 입력해주세요.")) {
-                  return;
-                }
-                if (!$content.val()) {
-                  if (!confirm("증상 기록 없이 저장하시겠습니까?")) {
-                    return;
-                  }
-                }
+              $(".event-date").val(date);
 
-                let data = new FormData();
-                data.append("postDate", $start.val());
-                data.append("content", $content.val());
+              $(e.target)
+                .on("click", ".submit-btn", () => {
+                  let data = new FormData();
+                  data.append("postDate", date);
+                  data.append("content", $(".event-content").val());
 
-                let imageFileInputs = $(".img-file");
+                  // 파일 처리
+                  let fileInputs = $(".file-input");
 
-                for (let i = 0; i < imageFileInputs.length; i++) {
-                  let file = imageFileInputs[i].files[0];
-                  if (file) {
-                    data.append("files", file);
-                  }
-                }
-
-                $.ajax({
-                  url: "/calendar/event/" + id,
-                  method: "POST",
-                  processData: false,
-                  contentType: false,
-                  data: data,
-                  success: (response) => {
-                    if (response.success) {
-                      calendar.refetchEvents();
-                      $modal.modal("hide");
-                      showToast("추가 완료되었습니다.");
-                    } else {
-                      $modal.modal("hide");
-                      showToast("서버에서 오류가 발생했습니다.");
+                  for (let i = 0; i < fileInputs.length; i++) {
+                    let file = fileInputs[i].files[0];
+                    if (file) {
+                      data.append("files", file);
                     }
-                  },
-                  error: (error) => {
-                    console.log("🚀 ~ file: calendar.html:534 ~ .on ~ error:", error);
-                    calendar.refetchEvents();
-                    $modal.modal("hide");
-                    showToast("추가 요청 오류가 발생했습니다.");
-                  },
+                  }
+
+                  $.ajax({
+                    url: "/calendar/event/" + categoryId,
+                    method: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: (response) => {
+                      if (response.success) {
+                        calendar.refetchEvents();
+                        modal.hide();
+                        showToast("이벤트가 추가되었습니다.");
+                      } else {
+                        modal.hide();
+                        showToast("서버 오류가 발생했습니다.");
+                      }
+                    },
+                    error: (error) => {
+                      calendar.refetchEvents();
+                      modal.hide();
+                      showToast("전달 및 요청 오류가 발생했습니다.");
+                    },
+                  });
+                })
+                // 주석 from GPT-4
+                // 파일 선택 필드의 값이 변경될 때마다 실행되는 이벤트 핸들러입니다.
+                .on("change", ".file-input", function () {
+                  // 만약 파일이 선택되었다면
+                  if ($(this).val()) {
+                    // "삭제" 버튼을 현재 요소(파일 선택 필드) 바로 뒤에 추가합니다.
+                    $(this).after($("<input>").addClass("btn btn-danger remove-btn ms-1").attr({ type: "button", value: "삭제" }));
+                  } else {
+                    // 파일이 선택되지 않았다면,
+                    // 만약 현재 요소가 첫 번째 파일 입력 필드가 아니라면 (즉, 추가적으로 생성된 입력 필드라면)
+                    if ($(this).index(".file-input") > 0) {
+                      // 현재 요소를 포함하고 있는 div를 삭제합니다. (파일 입력 필드 전체를 삭제)
+                      $(this).parent().remove();
+                    } else {
+                      // 첫 번째 파일 입력 필드라면, 해당 입력 필드 바로 뒤의 "삭제" 버튼만을 삭제합니다.
+                      $(this).next(".remove-btn").remove();
+                    }
+                  }
+                })
+                // "추가" 버튼을 클릭했을 때 실행되는 이벤트 핸들러입니다.
+                .on("click", ".add-btn", function () {
+                  // 새로운 div를 생성하고, 그 안에 새로운 파일 입력 필드를 추가한 후,
+                  // 이 div를 '.event-file-container' 클래스를 가진 요소 안에 추가합니다.
+                  $("<div>", { class: "d-flex mt-1" })
+                    .append($("<input>").addClass("form-control file-input").attr({ type: "file", name: "image", accept: "image/*" }))
+                    .appendTo(".event-file-container");
+                })
+                // '삭제' 버튼을 클릭했을 때 실행되는 이벤트 핸들러입니다.
+                .on("click", ".remove-btn", function () {
+                  // 만약 현재 요소(버튼)가 첫 번째 버튼이 아니라면 (즉, 추가적으로 생성된 '삭제' 버튼이라면)
+                  if ($(this).index(".btn") > 0) {
+                    // 현재 요소(버튼)와 함께 해당 부모 div 전체를 삭제합니다. (파일 입력 필드 전체를 삭제)
+                    $(this).parent().remove();
+                  } else {
+                    // 첫 번째 '삭제' 버튼인 경우,
+                    //"change" 이벤트 핸들러에서 정의한 로직에 따라 동작하도록
+                    //"change" 이벤트를 강제로 발생시킵니다. (첫 번째 '삭제' 버튼만 삭제)
+                    $(this).prev().val(null);
+                    $(this).prev().trigger("change");
+                  }
                 });
-              });
+            });
+
+            modal.show();
+
+            // 삽입 로직
           },
         });
 

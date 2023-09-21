@@ -14,14 +14,19 @@
 
     <select id="getEventById">
         SELECT 
-            UNQ_ID as unqId,
-            TO_CHAR(POST_DATE, 'YYYY-mm-dd') as postDate,
-            CONTENT,
-            TO_CHAR(WRITE_DATE, 'YYYY-mm-dd') as writeDate
+            cells.UNQ_ID as unqId,
+            TO_CHAR(cells.POST_DATE, 'YYYY-mm-dd') as postDate,
+            cells.CONTENT,
+            TO_CHAR(cells.WRITE_DATE, 'YYYY-mm-dd') as writeDate,
+            categorys.NAME as categoryName
         FROM
             cells
+        JOIN 
+            category_cells ON cells.UNQ_ID = category_cells.CELL_ID
+        JOIN 
+            categorys ON category_cells.CATEGORY_ID = categorys.UNQ_ID
         WHERE
-            UNQ_ID = #{cellId}
+            cells.UNQ_ID = #{cellId}
     </select>
 
     <!-- addEvent --> 

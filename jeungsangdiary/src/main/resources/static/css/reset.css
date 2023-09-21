@@ -116,6 +116,7 @@ button:focus {
 }
 body {
   font-family: "Noto Sans KR", sans-serif;
+  background-color: #fefdf1;
 }
 
 #wrapper {

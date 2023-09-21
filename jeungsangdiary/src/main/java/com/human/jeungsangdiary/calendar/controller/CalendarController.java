@@ -58,6 +58,11 @@ public class CalendarController {
     return eventList;
   }
 
+  @GetMapping("/event/{id}")
+  public @ResponseBody CellVO getEvent(@PathVariable("id") Long id) {
+    return cellService.getEventById(id);
+  }
+
   // 캘린더에서 이벤트를 이동할 때 PUT 요청을 처리합니다.
   @PutMapping("/event/{id}")
   public ResponseEntity<Map<String, Boolean>> move(
@@ -87,9 +92,13 @@ public class CalendarController {
   ) {
     Map<String, Boolean> response = new HashMap<>();
     try {
+      // 이벤트 저장
       Long insertedEventId = cellService.addEvent(cell);
+
+      // 이벤트의 카테고리 저장
       cellService.setCategoryByEventId(categoryId, insertedEventId);
 
+      // 파일을 바이너리 데이터로 변환 후 객체로 저장 (to api)
       List<FileReqeust> files = fileUtil.uploadFiles(cell.getFiles());
 
       // 파일 정보 저장 (to database)

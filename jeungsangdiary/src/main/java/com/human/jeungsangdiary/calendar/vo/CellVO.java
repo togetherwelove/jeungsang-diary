@@ -13,6 +13,8 @@ public class CellVO {
   private String content;
   private String writeDate;
 
+  private String categoryName;
+
   private List<MultipartFile> files = new ArrayList<>();
 
   private List<Long> removeFileIds = new ArrayList<>();
