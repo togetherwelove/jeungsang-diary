@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jeungsangdiary.calendar.mapper.CategoryCellMapper">
+    <!-- setCategoryByEventId --> 
+    <insert id="setCategoryByEventId">
+    INSERT INTO CATEGORY_CELLS (
+            CATEGORY_ID,
+            CELL_ID
+        ) VALUES (
+            #{categoryId},
+            #{insertedEventId}
+        )
+    </insert>
+</mapper>

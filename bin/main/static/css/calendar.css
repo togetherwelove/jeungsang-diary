@@ -1,0 +1,52 @@
+.gcal-event {
+  border-color: orangered;
+  background-color: orangered;
+  pointer-events: none;
+}
+
+.external-event-hover {
+  transform: scale(1.1);
+}
+
+.custom-tooltip {
+  --bs-tooltip-bg: rgba(0, 0, 0, 0);
+}
+
+.draggable-item {
+  position: relative;
+  z-index: 999;
+  background-color: white;
+  transition: all 0.1s ease-out;
+}
+
+.category-imgs {
+  width: 48px;
+}
+
+@media (max-width: 1199px) and (min-width: 992px) {
+  .category-imgs {
+    width: 38px;
+  }
+  .category-imgs + span {
+    font-size: 13px;
+  }
+}
+
+#trash-can {
+  position: absolute;
+  width: 52px;
+  top: 95px;
+  left: 175px;
+}
+
+#toast {
+  position: fixed;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 16px;
+  z-index: 1000;
+  right: 30px;
+  bottom: 30px;
+  font-size: 17px;
+}

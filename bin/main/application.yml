@@ -1,0 +1,17 @@
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@58.72.151.124:1521:orcl
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: human
+    password: 123456
+  servlet:
+    multipart:
+      maxFileSize: 8MB
+      maxRequestSize: 40MB
