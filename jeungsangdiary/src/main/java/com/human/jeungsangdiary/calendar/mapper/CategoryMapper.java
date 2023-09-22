@@ -8,5 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface CategoryMapper {
   List<CategoryVO> getCategories();
 
-  String getCategoryName(Long unqId);
+  String getCategoryNameByCellId(Long unqId);
+
+  String getCategoryImgUrlById(Long id);
 }

@@ -16,7 +16,11 @@ public class CategoryDAO {
     return categoryMapper.getCategories();
   }
 
-  public String selectCategoryName(Long unqId) {
-    return categoryMapper.getCategoryName(unqId);
+  public String getCategoryNameByCellId(Long unqId) {
+    return categoryMapper.getCategoryNameByCellId(unqId);
+  }
+
+  public String getCategoryImgUrlByid(Long id) {
+    return categoryMapper.getCategoryImgUrlById(id);
   }
 }

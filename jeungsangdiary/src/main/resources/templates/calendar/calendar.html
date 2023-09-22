@@ -28,11 +28,15 @@
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="event-title"></h5>
+                <h5 class="modal-title"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <form enctype="multipart/form-data">
+                  <label class="col-form-label">제목</label>
+                  <div class="md-3 d-flex align-items-center">
+                    <input class="form-control event-title" type="text" />
+                  </div>
                   <label class="col-form-label">날짜</label>
                   <div class="md-3">
                     <input class="form-control event-date" type="date" />
@@ -253,6 +257,46 @@
           });
         }
 
+        function handleFileInputChange($this) {
+          // 만약 파일이 선택되었다면
+          if ($this.val()) {
+            // "삭제" 버튼을 현재 요소(파일 선택 필드) 바로 뒤에 추가합니다.
+            $this.after($("<input>").addClass("btn btn-danger remove-btn ms-1").attr({ type: "button", value: "삭제" }));
+          } else {
+            // 파일이 선택되지 않았다면,
+            // 만약 현재 요소가 첫 번째 파일 입력 필드가 아니라면 (즉, 추가적으로 생성된 입력 필드라면)
+            if ($this.index(".file-input") > 0) {
+              // 현재 요소를 포함하고 있는 div를 삭제합니다. (파일 입력 필드 전체를 삭제)
+              $this.parent().remove();
+            } else {
+              // 첫 번째 파일 입력 필드라면, 해당 입력 필드 바로 뒤의 "삭제" 버튼만을 삭제합니다.
+              $this.next(".remove-btn").remove();
+            }
+          }
+        }
+
+        function handleAddButtonClick() {
+          // 새로운 div를 생성하고, 그 안에 새로운 파일 입력 필드를 추가한 후,
+          // 이 div를 '.event-file-container' 클래스를 가진 요소 안에 추가합니다.
+          $("<div>", { class: "d-flex mt-1" })
+            .append($("<input>").addClass("form-control file-input").attr({ type: "file", name: "image", accept: "image/*" }))
+            .appendTo(".event-file-container");
+        }
+
+        function handleRemoveButtonClick($this) {
+          // 만약 현재 요소(버튼)가 첫 번째 버튼이 아니라면 (즉, 추가적으로 생성된 '삭제' 버튼이라면)
+          if ($this.index(".btn") > 0) {
+            // 현재 요소(버튼)와 함께 해당 부모 div 전체를 삭제합니다. (파일 입력 필드 전체를 삭제)
+            $this.parent().remove();
+          } else {
+            // 첫 번째 '삭제' 버튼인 경우,
+            //"change" 이벤트 핸들러에서 정의한 로직에 따라 동작하도록
+            //"change" 이벤트를 강제로 발생시킵니다. (첫 번째 '삭제' 버튼만 삭제)
+            $this.prev().val(null);
+            $this.prev().trigger("change");
+          }
+        }
+
         let originExportModal = $("#export-modal").clone();
         let originEventModal = $("#event-modal").clone();
 
@@ -402,16 +446,18 @@
 
             const modal = new bootstrap.Modal($("#event-modal"));
             // 데이터 가져와서 모달에 넣기
-            $.getJSON("calendar/event/" + id, function (data) {
+            $.getJSON("/calendar/event/" + id, function (data) {
               $(modal._element).on("shown.bs.modal", function (e) {
-                $(".event-title").text(data.categoryName);
+                // TODO 수정사항
+                $(".modal-title").text(data.categoryName);
                 $(".event-date").val(data.postDate);
                 $(".event-content").val(data.content);
 
-                // TODO 파일 보이게 하기
+                // 파일 보이게 하기
                 $.getJSON("/event/" + id + "/files", function (data) {
                   $.each(data, function (index, file) {
                     $("<div>", { class: "d-flex mt-1" })
+                      .append($('<div><i class="fa fa-file-image-o" aria-hidden="true"></i></div>').addClass("btn btn-primary preview-btn me-1"))
                       .append($("<input>").addClass("form-control file-read-input").attr({ type: "text", readonly: true, value: file.originName, "data-unqid": file.unqId }))
                       .append($("<input>").addClass("btn btn-secondary download-btn ms-1").attr({ type: "button", value: "다운로드" }))
                       .append($("<input>").addClass("btn btn-danger remove-btn ms-1").attr({ type: "button", value: "삭제" }))
@@ -421,7 +467,7 @@
                   // 파일 다운로드 로직
                   $(e.target)
                     .on("click", ".download-btn", function () {
-                      let id = $(this).prevAll(".file-read-input").data("unqid");
+                      let id = $(this).prev(".file-read-input").data("unqid");
 
                       $.getJSON("/files/download/" + id, function (data) {
                         $("<a>", {
@@ -434,65 +480,97 @@
                         $("a[download]").remove();
                       });
                     })
-                    .on("click", ".remove-btn", function () {
-                      let id = $(this).prevAll(".file-read-input").data("unqid");
+                    .on("mouseover", ".preview-btn", function (e) {
+                      let $this = $(this);
+                      let id = $this.next().data("unqid");
 
-                      if (confirm("파일을 삭제하시겠습니까?")) {
-                        removeFileId.add(id);
-                        alert("변경사항을 적용하시려면 '저장하기'를 눌러주세요.");
-                        $(this).parent().remove();
+                      $.getJSON("/files/download/" + id, function (data) {
+                        $this.attr("data-bs-title", '<img src="data:image/*;base64,' + data.imageData + '"/>');
+                        $this.attr("data-bs-custom-class", "custom-tooltip");
+                        $this.attr("data-bs-placement", "left");
+                        $this.tooltip({
+                          html: true,
+                          trigger: "hover",
+                        });
+                      });
+                    })
+                    // 수정 이벤트 핸들러
+                    .on("click", ".submit-btn", () => {
+                      if (!validateDateField($(".event-date"), "날짜를 입력해주세요.")) return;
+
+                      // 데이터 담기
+                      let data = new FormData();
+                      data.append("postDate", $(".event-date").val());
+                      data.append("content", $(".event-content").val());
+
+                      // 파일 처리
+                      let fileInputs = $(".file-input");
+
+                      for (let i = 0; i < fileInputs.length; i++) {
+                        let file = fileInputs[i].files[0];
+                        if (file) {
+                          data.append("files", file);
+                        }
+                      }
+
+                      // 파일 삭제 처리
+                      let removeFileIds = removeFileId.getAll();
+
+                      for (let i = 0; i < removeFileIds.length; i++) {
+                        data.append("removeFileIds", removeFileIds[i]);
+                      }
+
+                      $.ajax({
+                        url: "/calendar/update/" + id,
+                        method: "PUT",
+                        processData: false,
+                        contentType: false,
+                        data: data,
+                        success: (response) => {
+                          if (response.success) {
+                            calendar.refetchEvents();
+                            modal.hide();
+                            showToast("이벤트가 수정되었습니다.");
+                          } else {
+                            modal.hide();
+                            showToast("서버 오류가 발생했습니다.");
+                          }
+                        },
+                        error: (error) => {
+                          calendar.refetchEvents();
+                          modal.hide();
+                          showToast("전달 및 요청 오류가 발생했습니다.");
+                        },
+                      });
+                    })
+                    // 파일 선택 필드의 값이 변경될 때마다 실행되는 이벤트 핸들러입니다.
+                    .on("change", ".file-input", function () {
+                      handleFileInputChange($(this));
+                    })
+                    // "추가" 버튼을 클릭했을 때 실행되는 이벤트 핸들러입니다.
+                    .on("click", ".add-btn", function () {
+                      handleAddButtonClick();
+                    })
+                    // '삭제' 버튼을 클릭했을 때 실행되는 이벤트 핸들러입니다.
+                    .on("click", ".remove-btn", function () {
+                      let $this = $(this);
+                      let $readInput = $this.siblings(".file-read-input");
+                      let $fileInput = $this.siblings(".file-input");
+
+                      if ($readInput.length) {
+                        // .file-read-input이 있는 경우의 로직
+                        console.log("Found file-read-input sibling.");
+                        if (confirm("파일을 삭제하시겠습니까?")) {
+                          let id = $readInput.data("unqid");
+                          removeFileId.add(id);
+                          alert("변경사항은 [저장하기]를 누르면 적용됩니다.");
+                          handleRemoveButtonClick($this);
+                        }
+                      } else if ($fileInput.length) {
+                        // .file-input이 있는 경우의 로직
+                        handleRemoveButtonClick($this);
                       }
                     });
-                });
-
-                // 수정 이벤트 핸들러
-                $(e.target).on("click", ".submit-btn", () => {
-                  if (!validateDateField($(".event-date"), "날짜를 입력해주세요.")) return;
-
-                  // 데이터 담기
-                  let data = new FormData();
-                  data.append("postDate", $(".event-date").val());
-                  data.append("content", $(".event-content").val());
-
-                  // 파일 처리
-                  let fileInputs = $(".file-input");
-
-                  for (let i = 0; i < fileInputs.length; i++) {
-                    let file = fileInputs[i].files[0];
-                    if (file) {
-                      data.append("files", file);
-                    }
-                  }
-
-                  // 파일 삭제 처리
-                  let removeFileIds = removeFileId.getAll();
-
-                  for (let i = 0; i < removeFileIds.length; i++) {
-                    data.append("removeFileIds", removeFileIds[i]);
-                  }
-
-                  $.ajax({
-                    url: "/calendar/update/" + id,
-                    method: "PUT",
-                    processData: false,
-                    contentType: false,
-                    data: data,
-                    success: (response) => {
-                      if (response.success) {
-                        calendar.refetchEvents();
-                        modal.hide();
-                        showToast("이벤트가 수정되었습니다.");
-                      } else {
-                        modal.hide();
-                        showToast("서버 오류가 발생했습니다.");
-                      }
-                    },
-                    error: (error) => {
-                      calendar.refetchEvents();
-                      modal.hide();
-                      showToast("전달 및 요청 오류가 발생했습니다.");
-                    },
-                  });
                 });
               });
               modal.show();
@@ -560,15 +638,24 @@
               // 이벤트 날짜
               let date = info.dateStr;
 
-              // 제목
-              $(".event-title").text("어떻게 아프신가요?");
+              // 제목 삽입
+              $(".modal-title").text("어떻게 아프신가요?");
 
+              // 선택한 카테고리 삽입
+              $.get("/category/image/" + categoryId, function (data) {
+                let $img = $("<img>", { class: "me-2", src: data }).css({ height: "45px", marginLeft: "auto" });
+                $(".modal-title").before($img);
+              });
+
+              // 날짜 삽입
               $(".event-date").val(date);
 
               $(e.target)
                 .on("click", ".submit-btn", () => {
+                  if (!validateDateField($(".event-date"), "날짜를 입력해주세요.")) return;
+
                   let data = new FormData();
-                  data.append("postDate", date);
+                  data.append("postDate", $(".event-date").val());
                   data.append("content", $(".event-content").val());
 
                   // 파일 처리
@@ -604,46 +691,20 @@
                     },
                   });
                 })
-                // 주석 from GPT-4
                 // 파일 선택 필드의 값이 변경될 때마다 실행되는 이벤트 핸들러입니다.
                 .on("change", ".file-input", function () {
-                  // 만약 파일이 선택되었다면
-                  if ($(this).val()) {
-                    // "삭제" 버튼을 현재 요소(파일 선택 필드) 바로 뒤에 추가합니다.
-                    $(this).after($("<input>").addClass("btn btn-danger remove-btn ms-1").attr({ type: "button", value: "삭제" }));
-                  } else {
-                    // 파일이 선택되지 않았다면,
-                    // 만약 현재 요소가 첫 번째 파일 입력 필드가 아니라면 (즉, 추가적으로 생성된 입력 필드라면)
-                    if ($(this).index(".file-input") > 0) {
-                      // 현재 요소를 포함하고 있는 div를 삭제합니다. (파일 입력 필드 전체를 삭제)
-                      $(this).parent().remove();
-                    } else {
-                      // 첫 번째 파일 입력 필드라면, 해당 입력 필드 바로 뒤의 "삭제" 버튼만을 삭제합니다.
-                      $(this).next(".remove-btn").remove();
-                    }
-                  }
+                  console.log("drop option's handler");
+                  handleFileInputChange($(this));
                 })
                 // "추가" 버튼을 클릭했을 때 실행되는 이벤트 핸들러입니다.
                 .on("click", ".add-btn", function () {
-                  // 새로운 div를 생성하고, 그 안에 새로운 파일 입력 필드를 추가한 후,
-                  // 이 div를 '.event-file-container' 클래스를 가진 요소 안에 추가합니다.
-                  $("<div>", { class: "d-flex mt-1" })
-                    .append($("<input>").addClass("form-control file-input").attr({ type: "file", name: "image", accept: "image/*" }))
-                    .appendTo(".event-file-container");
+                  console.log("drop option's handler");
+                  handleAddButtonClick();
                 })
                 // '삭제' 버튼을 클릭했을 때 실행되는 이벤트 핸들러입니다.
                 .on("click", ".remove-btn", function () {
-                  // 만약 현재 요소(버튼)가 첫 번째 버튼이 아니라면 (즉, 추가적으로 생성된 '삭제' 버튼이라면)
-                  if ($(this).index(".btn") > 0) {
-                    // 현재 요소(버튼)와 함께 해당 부모 div 전체를 삭제합니다. (파일 입력 필드 전체를 삭제)
-                    $(this).parent().remove();
-                  } else {
-                    // 첫 번째 '삭제' 버튼인 경우,
-                    //"change" 이벤트 핸들러에서 정의한 로직에 따라 동작하도록
-                    //"change" 이벤트를 강제로 발생시킵니다. (첫 번째 '삭제' 버튼만 삭제)
-                    $(this).prev().val(null);
-                    $(this).prev().trigger("change");
-                  }
+                  console.log("drop option's handler");
+                  handleRemoveButtonClick($(this));
                 });
             });
 

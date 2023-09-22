@@ -10,7 +10,7 @@
             categorys
     </select>
 
-    <select id="getCategoryName">
+    <select id="getCategoryNameByCellId">
         SELECT
             c.name as name
         FROM
@@ -19,5 +19,14 @@
         ON c.unq_id = ccell.category_id
         WHERE
             ccell.cell_id = #{unqId}
+    </select>
+
+    <select id="getCategoryImgUrlById" parameterType="long">
+        SELECT
+            IMG_URL
+        FROM
+            categorys
+        WHERE
+            UNQ_ID = #{id}
     </select>
 </mapper>

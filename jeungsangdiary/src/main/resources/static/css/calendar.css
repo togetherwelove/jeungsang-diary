@@ -8,8 +8,22 @@
   transform: scale(1.1);
 }
 
+.preview-btn {
+  cursor: default;
+}
+
 .custom-tooltip {
   --bs-tooltip-bg: rgba(0, 0, 0, 0);
+}
+
+.custom-tooltip .tooltip-inner {
+  max-width: none; /* Bootstrap에서 기본적으로 설정된 max-width 제거 */
+}
+
+.custom-tooltip .tooltip-inner img {
+  height: 145px;
+  max-width: 100%; /* 이미지 최대 너비 설정 */
+  max-height: 100%; /* 이미지 최대 높이 설정 */
 }
 
 .draggable-item {

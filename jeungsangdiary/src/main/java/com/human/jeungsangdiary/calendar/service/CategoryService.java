@@ -15,4 +15,8 @@ public class CategoryService {
   public List<CategoryVO> getCategories() {
     return categoryDAO.getCategories();
   }
+
+  public String getCategoryImgUrlById(Long id) {
+    return categoryDAO.getCategoryImgUrlByid(id);
+  }
 }

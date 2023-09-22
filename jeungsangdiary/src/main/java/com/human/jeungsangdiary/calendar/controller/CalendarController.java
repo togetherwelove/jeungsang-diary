@@ -58,32 +58,6 @@ public class CalendarController {
     return eventList;
   }
 
-  @GetMapping("/event/{id}")
-  public @ResponseBody CellVO getEvent(@PathVariable("id") Long id) {
-    return cellService.getEventById(id);
-  }
-
-  // 캘린더에서 이벤트를 이동할 때 PUT 요청을 처리합니다.
-  @PutMapping("/event/{id}")
-  public ResponseEntity<Map<String, Boolean>> move(
-    @PathVariable("id") Long id,
-    @RequestBody CellVO cell
-  ) {
-    Map<String, Boolean> response = new HashMap<>();
-
-    try {
-      cellService.moveEvent(id, cell.getPostDate());
-      response.put("success", true);
-      return ResponseEntity.ok(response);
-    } catch (Exception e) {
-      e.printStackTrace();
-      response.put("success", false);
-      return ResponseEntity
-        .status(HttpStatus.EXPECTATION_FAILED)
-        .body(response);
-    }
-  }
-
   // 새로운 데이터를 추가하는 POST 요청을 처리합니다.
   @PostMapping("/event/{categoryId}")
   public ResponseEntity<Map<String, Boolean>> add(
@@ -104,6 +78,27 @@ public class CalendarController {
       // 파일 정보 저장 (to database)
       fileService.saveFiles(insertedEventId, files);
 
+      response.put("success", true);
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      e.printStackTrace();
+      response.put("success", false);
+      return ResponseEntity
+        .status(HttpStatus.EXPECTATION_FAILED)
+        .body(response);
+    }
+  }
+
+    // 캘린더에서 이벤트를 이동할 때 PUT 요청을 처리합니다.
+  @PutMapping("/event/{id}")
+  public ResponseEntity<Map<String, Boolean>> move(
+    @PathVariable("id") Long id,
+    @RequestBody CellVO cell
+  ) {
+    Map<String, Boolean> response = new HashMap<>();
+
+    try {
+      cellService.moveEvent(id, cell.getPostDate());
       response.put("success", true);
       return ResponseEntity.ok(response);
     } catch (Exception e) {

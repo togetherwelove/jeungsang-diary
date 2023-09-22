@@ -28,7 +28,7 @@ public class CellService {
 
     for (CellVO cell : cells) {
       event = new HashMap<>();
-      String title = categoryDAO.selectCategoryName(cell.getUnqId());
+      String title = categoryDAO.getCategoryNameByCellId(cell.getUnqId());
       String start = cell.getPostDate();
       event.put("id", cell.getUnqId());
       event.put("title", title);
