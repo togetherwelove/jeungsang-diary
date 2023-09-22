@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <div th:replace="fragments/common :: scripts"></div>
     <meta charset="UTF-8" />
@@ -14,14 +14,15 @@
         <div class="d-flex justify-content-between align-items-center">
           <h1>게시글 쓰기</h1>
         </div>
-        <br />
+        <br>
         <!-- 게시글 입력 -->
-        <form action="list" method="post">
+        <form action="list"  method="POST" id="frm_write" enctype="multipart/form-data">
+          
           <table class="table table-striped table-hover">
             <tr>
               <td style="width: 7.5%" id="title-label">제목</td>
               <td>
-                <input type="text" name="title" id="title" class="form-control" />
+                <input type="text" name="title" id="title" class="form-control"/>
                 <p id="title-error" class="error-msg"></p>
               </td>
             </tr>
@@ -31,33 +32,33 @@
                 <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
               </td>
             </tr>
-            <form action="list" method="post" enctype="multipart/form-data">
-              <tr>
-                <td style="width: 7.5%" id="content-label">파일</td>
-                <td>
-                  <input type="file" name="file" id="file" class="form-control" multiple="multiple" />
-                </td>
-              </tr>
-            </form>
+            <tr>
+              <td style="width: 7.5%" id="content-label">파일</td>
+              <td>
+                  <input type="file" name="file" id="file" class="form-control" multiple="multiple">
+              </td>
+            </tr>
           </table>
-
+          
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <a href="list" class="btn btn-outline-primary" id="btn-insert">목록</a>
             </div>
             <div>
-              <input type="submit" value="등록" onclick="insert();" class="btn btn-outline-primary" />
+              <input type="button" value="등록" onclick="bbs_write();" class="btn btn-outline-primary">
             </div>
           </div>
         </form>
         <script src="js/jquery-3.7.0.min.js"></script>
         <script>
-          function insert() {
-            alert("게시글이 등록되었습니다");
+          function bbs_write() {
 
-            $("#list").submit();
+            frm = document.getElementById("frm_write");
+    		
+    		    frm.submit();
           }
         </script>
+
       </div>
     </section>
     <div th:replace="fragments/common :: footer"></div>
