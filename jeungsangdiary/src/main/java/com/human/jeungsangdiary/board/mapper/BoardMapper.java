@@ -19,6 +19,6 @@ public interface BoardMapper {
 	
 	public int deleteBoardOne(int unqId) throws Exception;
 	
-	public int insertBoard(Board board) throws Exception;
+	public int insertBoardList(Board board) throws Exception;
     
 }

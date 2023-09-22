@@ -64,6 +64,9 @@ public class BoardController {
 	public String write(Board board) throws Exception {
 	
 		int result = boardsv.regBoard(board);
+
+		System.out.println("제목 : " + board.getTitle());
+		System.out.println("내용 : " + board.getContent());
 		
 		return "redirect:/list";
 	}

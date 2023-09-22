@@ -57,7 +57,7 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public int regBoard(Board board) throws Exception {
 		// TODO Auto-generated method stub
-		int rst = boardmapper.insertBoard(board);
+		int rst = boardmapper.insertBoardList(board);
 		
 		return rst;
 	}
