@@ -1,11 +1,10 @@
-package com.human.jeungsangdiary.calendar.dao;
+package com.human.jeungsangdiary.calendar.cell;
 
-import com.human.jeungsangdiary.calendar.mapper.CategoryCellMapper;
-import com.human.jeungsangdiary.calendar.mapper.CellMapper;
-import com.human.jeungsangdiary.calendar.vo.CellVO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import com.human.jeungsangdiary.calendar.categorycell.CategoryCellMapper;
 
 @Repository
 public class CellDAO {

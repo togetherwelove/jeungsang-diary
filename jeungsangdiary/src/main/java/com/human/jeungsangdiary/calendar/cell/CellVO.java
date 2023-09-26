@@ -1,4 +1,4 @@
-package com.human.jeungsangdiary.calendar.vo;
+package com.human.jeungsangdiary.calendar.cell;
 
 import java.util.ArrayList;
 import java.util.List;

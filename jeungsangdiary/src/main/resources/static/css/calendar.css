@@ -52,15 +52,3 @@
   top: 95px;
   left: 175px;
 }
-
-#toast {
-  position: fixed;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 16px;
-  z-index: 1000;
-  right: 30px;
-  bottom: 30px;
-  font-size: 17px;
-}

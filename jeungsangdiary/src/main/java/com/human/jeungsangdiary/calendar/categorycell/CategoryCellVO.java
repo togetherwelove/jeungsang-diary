@@ -1,4 +1,4 @@
-package com.human.jeungsangdiary.calendar.vo;
+package com.human.jeungsangdiary.calendar.categorycell;
 
 import lombok.Data;
 

@@ -1,15 +1,12 @@
-package com.human.jeungsangdiary.calendar.controller;
+package com.human.jeungsangdiary.calendar.cell;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.human.jeungsangdiary.calendar.service.CellService;
-import com.human.jeungsangdiary.calendar.vo.CellVO;
-
 @RestController
-public class CallController {
+public class CellApiController {
 
     @Autowired
     CellService cellService;

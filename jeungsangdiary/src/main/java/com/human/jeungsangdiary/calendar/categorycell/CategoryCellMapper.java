@@ -1,4 +1,4 @@
-package com.human.jeungsangdiary.calendar.mapper;
+package com.human.jeungsangdiary.calendar.categorycell;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

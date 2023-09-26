@@ -1,7 +1,5 @@
-package com.human.jeungsangdiary.calendar.service;
+package com.human.jeungsangdiary.calendar.category;
 
-import com.human.jeungsangdiary.calendar.dao.CategoryDAO;
-import com.human.jeungsangdiary.calendar.vo.CategoryVO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

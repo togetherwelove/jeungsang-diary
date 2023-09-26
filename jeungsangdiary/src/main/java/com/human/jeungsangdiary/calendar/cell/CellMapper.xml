@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.human.jeungsangdiary.calendar.mapper.CellMapper">
+<mapper namespace="com.human.jeungsangdiary.calendar.cell.CellMapper">
     <!-- getEvents -->
     <select id="getEvents">
         SELECT 
@@ -30,7 +30,7 @@
     </select>
 
     <!-- addEvent --> 
-    <insert id="addEvent" parameterType="com.human.jeungsangdiary.calendar.vo.CellVO">
+    <insert id="addEvent" parameterType="com.human.jeungsangdiary.calendar.cell.CellVO">
         INSERT INTO
             cells (
                 UNQ_ID,

@@ -1,6 +1,5 @@
-package com.human.jeungsangdiary.calendar.mapper;
+package com.human.jeungsangdiary.calendar.cell;
 
-import com.human.jeungsangdiary.calendar.vo.CellVO;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
