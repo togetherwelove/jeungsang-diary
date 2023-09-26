@@ -148,19 +148,6 @@
           });
         }
 
-        /**
-         * 알림창 띄우기
-         * @param message 알림창에 띄울 메시지
-         */
-        function showToast(message) {
-          let toast = $("#toast");
-          toast.attr("hidden", false);
-          toast.html(message);
-          setTimeout(function () {
-            toast.attr("hidden", true);
-          }, 3000);
-        }
-
         // 파일 삭제 처리용 익명 함수
         const removeFileId = (function () {
           const ids = [];

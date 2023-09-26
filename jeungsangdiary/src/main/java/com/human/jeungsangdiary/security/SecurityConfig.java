@@ -7,10 +7,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @Configuration
-public class WebSecurityConfigure {
+public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -19,14 +20,17 @@ public class WebSecurityConfigure {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-        .authorizeRequests()
-        .anyRequest().permitAll();
-
-        http
-        .cors().and()
-        .csrf().disable();
-
+        http.csrf(csrf -> csrf.disable())
+                .exceptionHandling(handling -> handling
+                        .accessDeniedPage("/accessdenied"))
+                .authorizeRequests(requests -> requests
+                        .anyRequest().permitAll())
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .permitAll());
         return http.build();
     }
 }

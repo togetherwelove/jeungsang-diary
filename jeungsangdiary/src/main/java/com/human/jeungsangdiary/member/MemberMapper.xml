@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jeungsangdiary.member.MemberMapper">
+
+
+    <!-- existsByEmail --> 
+    <select id="existsByEmail" resultType="boolean">
+        SELECT
+            COUNT(*)
+        FROM
+            members
+        WHERE
+            email = #{email}
+    </select>
+
+    <!-- existsByUsername --> 
+    <select id="existsByUsername" resultType="boolean">
+        SELECT
+            COUNT(*)
+        FROM
+            members
+        WHERE
+            username = #{username}
+    </select>
+
+    <!-- insertMember --> 
+    <insert id="insertMember" parameterType="com.human.jeungsangdiary.member.MemberVO" >
+        INSERT INTO members (
+            username,
+            email,
+            password
+        ) VALUES (
+            #{username},
+            #{email},
+            #{password}
+        )
+        <selectKey resultType="long" order="AFTER" keyProperty="unqId">
+            SELECT
+                unq_id
+            FROM
+                members
+            WHERE
+                email = #{email}
+        </selectKey>
+    </insert>
+
+    <!-- insertMemberRole --> 
+    <insert id="insertMemberRole" parameterType="com.human.jeungsangdiary.member.MemberVO">
+        INSERT INTO member_roles (
+            member_id,
+            role
+        ) VALUES (
+            #{unqId},
+            #{role}
+        )
+    </insert>
+
+    <!-- findByEmail --> 
+    <select id="findByEmail" parameterType="com.human.jeungsangdiary.member.MemberVO">
+        SELECT
+            m.unq_id as unqId,
+            m.email,
+            m.password,
+            m.username,
+            mr.role
+        FROM
+            members m
+        LEFT JOIN
+            member_roles mr
+        ON
+            m.unq_id = mr.member_id
+        WHERE
+            m.email = #{email}
+    </select>
+
+
+    <!-- findById --> 
+    <select id="findById" parameterType="com.human.jeungsangdiary.member.MemberVO">
+        SELECT
+            m.unq_id as unqId,
+            m.email,
+            m.password,
+            m.username,
+            mr.role
+        FROM
+            members m
+        LEFT JOIN
+            member_roles mr
+        ON
+            m.unq_id = mr.member_id
+        WHERE
+            m.unq_id = #{memberId}
+    </select>
+</mapper>

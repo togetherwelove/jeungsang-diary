@@ -1,21 +1,13 @@
-package com.human.jeungsangdiary.calendar.controller;
+package com.human.jeungsangdiary.calendar;
 
-import com.human.jeungsangdiary.calendar.file.FileReqeust;
-import com.human.jeungsangdiary.calendar.file.FileService;
-import com.human.jeungsangdiary.calendar.file.FileUtil;
-import com.human.jeungsangdiary.calendar.service.CategoryService;
-import com.human.jeungsangdiary.calendar.service.CellService;
-import com.human.jeungsangdiary.calendar.vo.CategoryVO;
-import com.human.jeungsangdiary.calendar.vo.CellVO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,10 +17,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import com.human.jeungsangdiary.calendar.category.CategoryService;
+import com.human.jeungsangdiary.calendar.cell.CellService;
+import com.human.jeungsangdiary.calendar.cell.CellVO;
+import com.human.jeungsangdiary.calendar.file.FileReqeust;
+import com.human.jeungsangdiary.calendar.file.FileService;
+import com.human.jeungsangdiary.calendar.file.FileUtil;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/calendar")
-public class CalendarController {
+public class CalendarApiController {
 
   @Autowired
   CategoryService categoryService;
@@ -41,13 +44,6 @@ public class CalendarController {
 
   @Autowired
   FileUtil fileUtil;
-
-  @RequestMapping
-  public String calendar(Model model) {
-    List<CategoryVO> categories = categoryService.getCategories();
-    model.addAttribute("categories", categories);
-    return "calendar/calendar";
-  }
 
   @GetMapping("/event")
   public @ResponseBody List<Map<String, Object>> get() {
