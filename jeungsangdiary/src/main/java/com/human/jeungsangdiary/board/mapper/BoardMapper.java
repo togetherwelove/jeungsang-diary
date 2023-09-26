@@ -9,7 +9,7 @@ import com.human.jeungsangdiary.board.domain.Board;
 @Mapper
 public interface BoardMapper {
     
-    public List<Board> selectBoardList() throws Exception;
+    public List<Board> selectBoardList(int page) throws Exception;
 	
 	public int selectTotalBoard() throws Exception;
 	
@@ -19,6 +19,6 @@ public interface BoardMapper {
 	
 	public int deleteBoardOne(int unqId) throws Exception;
 	
-	public int insertBoardList(Board board) throws Exception;
+	public int insertBoard(Board board) throws Exception;
     
 }

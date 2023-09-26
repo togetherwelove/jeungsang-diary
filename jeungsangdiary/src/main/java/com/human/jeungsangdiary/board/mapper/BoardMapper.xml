@@ -13,6 +13,7 @@
         FROM
             boards
         ORDER BY unqId DESC
+        OFFSET 10*(#{page}-1) ROWS FETCH NEXT 10 ROWS ONLY
     </select>
 
     <!-- 게시글 총갯수 -->
@@ -26,19 +27,17 @@
 	</select>
 
     <!-- 게시글 쓰기 -->
-    <insert id="insertBoardList">
+    <insert id="insertBoard">
         INSERT INTO boards (
-                            USER_ID,
+                            UNQ_ID,
                             TITLE,
                             CONTENT,
-                            HIT,
-                            WRITE_DATE
+                            HIT
                         ) VALUES (
-                            #{userId},
+                            BOARD_SEQ.NEXTVAL,
                             #{title},
                             #{content},
-                            #{hit},
-                            #{writeDate}
+                            #{hit}
                         )
     </insert>
 
@@ -46,5 +45,10 @@
     <update id="updateBoardHit">
 		UPDATE boards SET hit=hit+1 WHERE UNQ_ID = #{UNQ_ID}
 	</update>
+
+    <!-- 게시글 삭제 -->
+	<delete id="deleteBoardOne">
+		DELETE FROM boards WHERE UNQ_ID = #{UNQ_ID}
+	</delete>
 
 </mapper>

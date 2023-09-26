@@ -13,7 +13,7 @@
       <!-- 제목 영역 -->
       <div class="d-flex justify-content-between align-items-center">
         <h1>게시판</h1>
-        <a href="write" class="btn btn-outline-primary">글쓰기</a>
+        <a href="insert" class="btn btn-outline-primary">글쓰기</a>
       </div>
       <br />
       <!-- 게시글 목록 -->
@@ -27,12 +27,12 @@
             <td style="width: 7.5%" id="hit">조회수</td>
           </tr>
 
-          <tr class="text-center" th:each="board:${list}">
-            <td style="width: 7.5%" id="unqId" th:text="${board.unqId}">번호</td>
-            <td style="width: 60%" id="title"><a th:href="|read?unqId=${board.unqId}|" th:text="${board.title}">제목</a></td>
-            <td style="width: 10%" id="userId" th:text="${board.userId}">작성자</td>
-            <td style="width: 15%" id="writeDate" th:text="${board.writeDate}">등록일자</td>
-            <td style="width: 7.5%" id="hit" th:text="${board.hit}">조회수</td>
+          <tr class="text-center" th:each="obj:${list}">
+            <td style="width: 7.5%" id="unqId" th:text="${obj.unqId}">번호</td>
+            <td style="width: 60%" id="title"><a th:href="|detail?unqId=${obj.unqId}|" th:text="${obj.title}">제목</a></td>
+            <td style="width: 10%" id="userId" th:text="${obj.userId}">작성자</td>
+            <td style="width: 15%" id="writeDate" th:text="${obj.writeDate}">등록일자</td>
+            <td style="width: 7.5%" id="hit" th:text="${obj.hit}">조회수</td>
           </tr>
         </thead>
       </table>
@@ -41,13 +41,15 @@
       <nav class="d-flex justify-content-center">
         <ul class="pagination">
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
+            <a th:href="|list?page=${1}|" class="page-link" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
+          <li class="page-item" th:each="pageno:${#numbers.sequence(pageObj.startPage, pageObj.endPage)}">
+            <a class="page-link" th:href="|list?page=${pageno}|" th:text="${pageno}">1</a>
+          </li>
+          <li class="page-item" >
+            <a class="page-link" th:href="|list?page=${pageObj.endPage}|" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>

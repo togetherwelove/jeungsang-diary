@@ -16,7 +16,7 @@
         </div>
         <br>
         <!-- 게시글 입력 -->
-        <form action="list"  method="POST" id="frm_write" enctype="multipart/form-data">
+        <form action="/board/insert"  method="POST" id="frm_write" enctype="multipart/form-data">
           
           <table class="table table-striped table-hover">
             <tr>
@@ -42,7 +42,7 @@
           
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <a href="list" class="btn btn-outline-primary" id="btn-insert">목록</a>
+              <a href="/board/list?page=1" class="btn btn-outline-primary" id="btn-insert">목록</a>
             </div>
             <div>
               <input type="button" value="등록" onclick="bbs_write();" class="btn btn-outline-primary">
