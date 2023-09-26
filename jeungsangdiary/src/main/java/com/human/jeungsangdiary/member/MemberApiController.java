@@ -109,7 +109,7 @@ public class MemberApiController {
         // 세션에 고유 인덱스 추가
         session.setAttribute("memberId", member.getUnqId());
         // 세션 10분동안 유지
-        session.setMaxInactiveInterval(600);
+        session.setMaxInactiveInterval(1800);
         
         // TODO 룰 할당 로직
 

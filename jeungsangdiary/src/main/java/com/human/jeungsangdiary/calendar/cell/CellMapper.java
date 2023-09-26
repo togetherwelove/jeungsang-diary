@@ -6,13 +6,11 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface CellMapper {
-  List<CellVO> getEvents();
+  List<CellVO> getEventsByUnqId(Long unqId);
 
   CellVO getEventById(Long cellId);
 
-  void addEvent(CellVO cell);
-
-  Long getLastInsertId();
+  void addEvent(@Param("cell") CellVO cell, @Param("memberId") Long memberId);
 
   void deleteById(Long id);
 

@@ -124,6 +124,11 @@ body {
   min-height: 100%;
   padding-bottom: 0;
 }
+
+.navbar {
+  background-color: #f5ffd8;
+}
+
 footer {
   height: 0;
   position: relative;
@@ -147,20 +152,4 @@ footer {
 ::selection {
   background-color: var(--main);
   color: white;
-}
-
-/* css 변수 선언 */
-:root {
-  /* 메인 컬러 지정 */
-  --main: #dce6ff;
-  --sub: #89b1ff;
-  --bg-light: #f3efeb;
-  --bg-gray: #aaa;
-  --neon-green: #b9cc95;
-  --neon-pink: #e8a3b5;
-  --light-pink: #f7ccd3;
-
-  --text-black: #000;
-  --text-gray: #666;
-  --text-light-gray: #999;
 }

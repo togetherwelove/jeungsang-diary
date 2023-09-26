@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.human.jeungsangdiary.calendar.cell.CellMapper">
-    <!-- getEvents -->
-    <select id="getEvents">
+    <!-- getEventsByUnqId -->
+    <select id="getEventsByUnqId">
         SELECT 
             UNQ_ID as unqId,
             TO_CHAR(POST_DATE, 'YYYY-mm-dd') as postDate,
+            TITLE,
             CONTENT,
             TO_CHAR(WRITE_DATE, 'YYYY-mm-dd') as writeDate
         FROM
             cells
+        WHERE
+            USER_ID = #{unqId}
     </select>
 
     <select id="getEventById">
         SELECT 
             cells.UNQ_ID as unqId,
             TO_CHAR(cells.POST_DATE, 'YYYY-mm-dd') as postDate,
+            cells.TITLE,
             cells.CONTENT,
             TO_CHAR(cells.WRITE_DATE, 'YYYY-mm-dd') as writeDate,
             categorys.NAME as categoryName
@@ -34,12 +38,16 @@
         INSERT INTO
             cells (
                 UNQ_ID,
+                USER_ID,
+                TITLE,
                 POST_DATE,
                 CONTENT
             ) VALUES (
-                #{unqId},
-                #{postDate},
-                #{content}
+                #{cell.unqId},
+                #{memberId},
+                #{cell.title},
+                #{cell.postDate},
+                #{cell.content}
             )
     </insert>
 
@@ -65,6 +73,7 @@
         UPDATE cells
         SET
             POST_DATE = #{postDate},
+            TITLE = #{title},
             CONTENT = #{content}
         WHERE
             UNQ_ID = #{unqId}

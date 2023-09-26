@@ -19,18 +19,19 @@ public class CellService {
   @Autowired
   CategoryDAO categoryDAO;
 
-  public List<Map<String, Object>> getEventList() {
+  public List<Map<String, Object>> getEventsByUnqId(Long unqId) {
     List<Map<String, Object>> eventList = new ArrayList<Map<String, Object>>();
     Map<String, Object> event = new HashMap<>();
 
-    List<CellVO> cells = cellDAO.getEvents();
+    List<CellVO> cells = cellDAO.getEventsByUnqId(unqId);
 
     for (CellVO cell : cells) {
       event = new HashMap<>();
-      String title = categoryDAO.getCategoryNameByCellId(cell.getUnqId());
+      String category = categoryDAO.getCategoryNameByCellId(cell.getUnqId());
       String start = cell.getPostDate();
       event.put("id", cell.getUnqId());
-      event.put("title", title);
+      event.put("title", cell.getTitle());
+      event.put("category", category);
       event.put("start", start);
       event.put("content", cell.getContent());
       eventList.add(event);
@@ -40,11 +41,11 @@ public class CellService {
   }
 
   @Transactional
-  public Long addEvent(CellVO cell) {
-    Long newId = cellDAO.getNextId();
-    cell.setUnqId(newId);
-    cellDAO.addEvent(cell);
-    return newId;
+  public Long addEvent(CellVO cell, Long memberId) {
+    Long unqId = cellDAO.getNextId();
+    cell.setUnqId(unqId);
+    cellDAO.addEvent(cell, memberId);
+    return unqId;
   }
 
   public void deleteById(Long id) {

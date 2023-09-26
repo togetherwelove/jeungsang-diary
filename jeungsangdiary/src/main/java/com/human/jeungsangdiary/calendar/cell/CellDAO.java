@@ -15,16 +15,12 @@ public class CellDAO {
   @Autowired
   CategoryCellMapper categoryCellMapper;
 
-  public List<CellVO> getEvents() {
-    return cellMapper.getEvents();
+  public List<CellVO> getEventsByUnqId(Long unqId) {
+    return cellMapper.getEventsByUnqId(unqId);
   }
 
-  public Long getLastInsertId() {
-    return cellMapper.getLastInsertId();
-  }
-
-  public void addEvent(CellVO cell) {
-    cellMapper.addEvent(cell);
+  public void addEvent(CellVO cell, Long memberId) {
+    cellMapper.addEvent(cell, memberId);
   }
 
   public void deleteById(Long id) {

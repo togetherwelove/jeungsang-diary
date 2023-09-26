@@ -10,6 +10,7 @@ public class CellVO {
 
   private Long unqId;
   private String postDate;
+  private String title;
   private String content;
   private String writeDate;
 

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>calendar</title>
 
-    <link rel="stylesheet" href="css/calendar.css" />
+    <link rel="stylesheet" href="/css/calendar.css" />
 
     <!-- fullcalendar -->
     <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
@@ -437,6 +437,7 @@
               $(modal._element).on("shown.bs.modal", function (e) {
                 // TODO 수정사항
                 $(".modal-title").text(data.categoryName);
+                $(".event-title").val(data.title);
                 $(".event-date").val(data.postDate);
                 $(".event-content").val(data.content);
 
@@ -487,6 +488,7 @@
 
                       // 데이터 담기
                       let data = new FormData();
+                      data.append("title", $(".event-title").val());
                       data.append("postDate", $(".event-date").val());
                       data.append("content", $(".event-content").val());
 
@@ -642,6 +644,7 @@
                   if (!validateDateField($(".event-date"), "날짜를 입력해주세요.")) return;
 
                   let data = new FormData();
+                  data.append("title", $(".event-title").val());
                   data.append("postDate", $(".event-date").val());
                   data.append("content", $(".event-content").val());
 
