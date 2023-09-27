@@ -50,8 +50,8 @@
             data: data,
             traditional: true,
             success: function (response) {
-              window.history.back();
               alert(`로그인 성공\n${response}님, 반갑습니다.`);
+              window.location = "/";
             },
             error: function (jqXHR, textStatus, errorThown) {
               let responseText = jqXHR.responseText;

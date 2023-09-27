@@ -21,9 +21,4 @@ public class UserVO {
         this.username = username;
         this.role = role;
     }
-
-    private int postcode;
-    private String address;
-    private String detailAddress;
-    private String extraAddress;
 }

@@ -14,33 +14,67 @@
           <h1 class="fs-4">회원 상세 정보</h1>
         </div>
         <div class="card-body">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-              <div class="row">
-                <div class="col-lg-6">
-                  <label class="fs-5">주소</label>
-                  <div class="input-group mb-2">
-                    <input class="form-control postcode" type="text" placeholder="우편번호" readonly />
-                    <input class="btn btn-secondary" type="button" value="우편번호 찾기" onclick="getPostcode()" />
-                  </div>
-                  <div class="input-group mb-2">
-                    <input class="form-control address" type="text" placeholder="도로명주소 혹은 지번주소" readonly />
-                  </div>
-                  <div class="input-group mb-2">
-                    <input class="form-control detailAddress" type="text" placeholder="상세주소" />
-                    <input class="form-control extraAddress" type="text" placeholder="참고항목" readonly />
-                  </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <label>닉네임</label>
+              <input class="form-control mb-3" th:value="${user.getUsername()}" type="text" readonly />
+              <label>이메일</label>
+              <input class="form-control mb-3" th:value="${user.getEmail()}" type="text" readonly />
+            </div>
+          </div>
+          <p class="fst-italic text-body-secondary">위 사항은 변경할 수 없습니다.</p>
+        </div>
+        <hr />
+        <form class="user-confirm-form">
+          <div class="card-body">
+            <p>회원 정보를 수정하려면 비밀번호를 입력해주세요.</p>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="input-group mb-3">
+                  <input class="form-control" name="password" type="password" placeholder="비밀번호" />
+                  <input class="btn btn-primary" type="submit" value="확인" />
                 </div>
               </div>
-            </li>
-            <li class="list-group-item">
-              <label class="fs-5">개인 정보</label>
-            </li>
-          </ul>
-        </div>
-        <div class="card-footer d-flex justify-content-end">
-          <input class="btn btn-primary btn-lg" type="submit" value="수정하기" />
-        </div>
+            </div>
+          </div>
+        </form>
+        <form class="user-form" hidden>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-6">
+                <label>주소</label>
+                <div class="input-group mb-3">
+                  <input class="form-control postcode" name="postcode" type="text" placeholder="우편번호" readonly />
+                  <input class="btn btn-secondary" type="button" value="우편번호 찾기" onclick="getPostcode()" />
+                </div>
+                <div class="input-group mb-3">
+                  <input class="form-control address" name="address" type="text" placeholder="주소" readonly />
+                </div>
+                <div class="input-group mb-3">
+                  <input class="form-control detailAddress" name="detailAddress" type="text" placeholder="상세주소" />
+                  <input class="form-control extraAddress" name="extraAddress" type="text" placeholder="참고항목" readonly />
+                </div>
+              </div>
+            </div>
+            <hr />
+            <h2>개인 정보</h2>
+            <div class="row">
+              <div class="col-lg-6">
+                <label>이름</label>
+                <div class="input-group mb-3">
+                  <input class="form-control name" name="name" type="text" placeholder="이름" />
+                </div>
+                <label>생년월일</label>
+                <div class="input-group mb-3">
+                  <input class="form-control birthdate" name="birthdate" type="date" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer d-flex justify-content-end">
+            <input class="btn btn-primary btn-lg" type="submit" value="수정하기" />
+          </div>
+        </form>
       </div>
     </div>
     <div th:replace="fragments/common :: footer"></div>
@@ -90,6 +124,53 @@
           },
         }).open();
       }
+      $(document).ready(function () {
+        $(".user-confirm-form").on("submit", function (e) {
+          e.preventDefault();
+          let data = $(this).serialize();
+          $.ajax({
+            url: "/user/detail/confirm",
+            method: "POST",
+            data: data,
+            success: (response) => {
+              alert("비밀번호 확인 성공");
+              $(".user-form").removeAttr("hidden");
+              $(this).hide();
+
+              $.getJSON("/user/detail/info", function (data) {
+                // 첫 번째 객체에서 이름과 생일 정보 가져오기
+                let userInfo = data[0];
+                $(".name").val(userInfo.name);
+                $(".birthdate").val(userInfo.birthdate.split(" ")[0]);
+
+                // 두 번째 객체에서 주소 정보 가져오기
+                let addressInfo = data[1];
+                $(".postcode").val(addressInfo.postcode);
+                $(".address").val(addressInfo.address);
+                $(".detailAddress").val(addressInfo.detailAddress);
+                $(".extraAddress").val(addressInfo.extraAddress);
+              });
+            },
+            error: function (jqXHR, textStatus, errorThown) {
+              alert("ajax 요청 중 에러가 발생했습니다.");
+            },
+          });
+        });
+
+        $(".user-form").on("submit", function (e) {
+          e.preventDefault();
+          let data = $(this).serialize();
+          $.ajax({
+            url: "/user/detail/update",
+            method: "PUT",
+            data: data,
+            success: function (response) {
+              alert("수정되었습니다.");
+            },
+            error: function (jqXHR, textStatus, errorThown) {},
+          });
+        });
+      });
     </script>
   </body>
 </html>

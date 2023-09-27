@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.human.jeungsangdiary.user.UserMapper">
 
-
     <!-- countByEmail --> 
     <select id="countByEmail" resultType="boolean">
         SELECT
@@ -58,19 +57,42 @@
     <!-- insertUserResidence --> 
     <insert id="insertUserResidence" parameterType="com.human.jeungsangdiary.user.UserVO">
         INSERT INTO user_Residences (
-            user_id,
-            postcode,
-            address,
-            detail_address,
-            extra_address
+            user_id
         ) VALUES (
-            #{unqId},
-            #{postcode, jdbcType=VARCHAR},
-            #{address, jdbcType=VARCHAR},
-            #{detailAddress, jdbcType=VARCHAR},
-            #{extraAddress, jdbcType=VARCHAR}
+            #{unqId}
         )
     </insert>
+
+    <!-- insertUserDetail --> 
+    <insert id="insertUserDetail" parameterType="com.human.jeungsangdiary.user.UserVO">
+        INSERT INTO user_details (
+            user_id
+        ) VALUES (
+            #{unqId}
+        )
+    </insert>
+
+    <!-- updateUserResidence --> 
+    <update id="updateUserResidence">
+        UPDATE user_residences
+        SET
+            postcode = #{req.postcode},
+            address = #{req.address},
+            detail_address = #{req.detailAddress},
+            extra_address = #{req.extraAddress}
+        WHERE
+            user_id = #{userId}
+    </update>
+
+    <!-- updateUserDetail --> 
+    <update id="updateUserDetail">
+        UPDATE user_details
+        SET
+            name = #{req.name},
+            birthdate = #{req.birthdate}
+        WHERE
+            user_id = #{userId}
+    </update>
 
     <!-- selectByEmail --> 
     <select id="selectByEmail" parameterType="com.human.jeungsangdiary.user.UserVO">
@@ -108,4 +130,28 @@
         WHERE
             users.unq_id = #{unqId}
     </select>
-</mapper>
+
+    <!-- selectUserResidence --> 
+    <select id="selectUserResidence" parameterType="long">
+        SELECT
+            postcode,
+            address,
+            detail_address as detailaddress,
+            extra_address as extraaddress
+        FROM
+            user_residences
+        WHERE
+            user_id = #{userId}
+    </select>
+
+    <!-- selectUserDetail --> 
+    <select id="selectUserDetail" parameterType="long">
+        SELECT
+            name,
+            birthdate
+        FROM
+            user_details
+        WHERE
+            user_id = #{userId}
+    </select>    
+    </mapper>

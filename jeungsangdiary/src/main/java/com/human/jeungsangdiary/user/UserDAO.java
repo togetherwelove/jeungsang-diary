@@ -28,10 +28,25 @@ public class UserDAO {
         return userMapper.selectByUnqId(userId);
     }
 
+    public DetailVO getUserDetail(Long userId) {
+        return userMapper.selectUserDetail(userId);
+    }
+
+    public ResidenceVO getUserResidence(Long userId) {
+        return userMapper.selectUserResidence(userId);
+    }
+
     @Transactional
     public void saveUser(UserVO user) {
         userMapper.insertUser(user);
         userMapper.insertUserRole(user);
+        userMapper.insertUserDetail(user);
         userMapper.insertUserResidence(user);
+    }
+
+    @Transactional
+    public void updateUser(Long userId, ResidenceVO res, DetailVO det) {
+        userMapper.updateUserResidence(userId, res);
+        userMapper.updateUserDetail(userId, det);
     }
 }

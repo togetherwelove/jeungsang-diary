@@ -5,9 +5,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ResidenceRequest {
-    private Long userId;
-    private int postcode;
+public class ResidenceVO {
+    private String postcode;
     private String address;
     private String detailAddress;
     private String extraAddress;

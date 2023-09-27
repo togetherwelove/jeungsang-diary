@@ -6,7 +6,6 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.human.jeungsangdiary.user.JoinRequest;
-import com.human.jeungsangdiary.user.LoginRequest;
 
 @Component
 public class JoinRequestValidator implements Validator {
