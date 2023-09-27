@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jeungsangdiary.user.UserMapper">
+
+
+    <!-- countByEmail --> 
+    <select id="countByEmail" resultType="boolean">
+        SELECT
+            COUNT(*)
+        FROM
+            users
+        WHERE
+            email = #{email}
+    </select>
+
+    <!-- countByUsername --> 
+    <select id="countByUsername" resultType="boolean">
+        SELECT
+            COUNT(*)
+        FROM
+            users
+        WHERE
+            username = #{username}
+    </select>
+
+    <!-- insertUser --> 
+    <insert id="insertUser" parameterType="com.human.jeungsangdiary.user.UserVO" >
+        INSERT INTO users (
+            username,
+            email,
+            password
+        ) VALUES (
+            #{username},
+            #{email},
+            #{password}
+        )
+        <selectKey resultType="long" order="AFTER" keyProperty="unqId">
+            SELECT
+                unq_id
+            FROM
+                users
+            WHERE
+                email = #{email}
+        </selectKey>
+    </insert>
+
+    <!-- insertUserRole --> 
+    <insert id="insertUserRole" parameterType="com.human.jeungsangdiary.user.UserVO">
+        INSERT INTO user_roles (
+            user_id,
+            role
+        ) VALUES (
+            #{unqId},
+            #{role}
+        )
+    </insert>
+
+    <!-- insertUserResidence --> 
+    <insert id="insertUserResidence" parameterType="com.human.jeungsangdiary.user.UserVO">
+        INSERT INTO user_Residences (
+            user_id,
+            postcode,
+            address,
+            detail_address,
+            extra_address
+        ) VALUES (
+            #{unqId},
+            #{postcode, jdbcType=VARCHAR},
+            #{address, jdbcType=VARCHAR},
+            #{detailAddress, jdbcType=VARCHAR},
+            #{extraAddress, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- selectByEmail --> 
+    <select id="selectByEmail" parameterType="com.human.jeungsangdiary.user.UserVO">
+        SELECT
+            users.unq_id as unqId,
+            users.email,
+            users.password,
+            users.username,
+            user_roles.role
+        FROM
+            users
+        LEFT JOIN
+            user_roles
+        ON
+            users.unq_id = user_roles.user_id
+        WHERE
+            users.email = #{email}
+    </select>
+
+
+    <!-- selectByUnqId --> 
+    <select id="selectByUnqId" parameterType="com.human.jeungsangdiary.user.UserVO">
+        SELECT
+            users.unq_id as unqId,
+            users.email,
+            users.password,
+            users.username,
+            user_roles.role
+        FROM
+            users
+        LEFT JOIN
+            user_roles
+        ON
+            users.unq_id = user_roles.user_id
+        WHERE
+            users.unq_id = #{unqId}
+    </select>
+</mapper>

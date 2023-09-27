@@ -21,8 +21,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(handling -> handling
-                        .accessDeniedPage("/accessdenied"))
                 .authorizeRequests(requests -> requests
                         .anyRequest().permitAll())
                 .logout(logout -> logout

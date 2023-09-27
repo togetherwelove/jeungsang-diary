@@ -44,7 +44,7 @@ public class CellApiController {
     FileUtil fileUtil;
 
     @GetMapping("/event")
-    public List<Map<String, Object>> getEventsByUnqId(@SessionAttribute("memberId") Long unqId) {
+    public List<Map<String, Object>> getEventsByUnqId(@SessionAttribute("userId") Long unqId) {
         List<Map<String, Object>> eventList = cellService.getEventsByUnqId(unqId);
         if (eventList == null) {
         eventList = new ArrayList<>();
@@ -62,12 +62,12 @@ public class CellApiController {
     public ResponseEntity<Map<String, Boolean>> add(
         @PathVariable("categoryId") Long categoryId,
         @ModelAttribute CellVO cell,
-        @SessionAttribute("memberId") Long memberId
+        @SessionAttribute("userId") Long userId
     ) {
         Map<String, Boolean> response = new HashMap<>();
         try {
         // 이벤트 저장
-        Long insertedEventId = cellService.addEvent(cell, memberId);
+        Long insertedEventId = cellService.addEvent(cell, userId);
 
         // 이벤트의 카테고리 저장
         cellService.setCategoryByEventId(categoryId, insertedEventId);

@@ -19,8 +19,8 @@ public class CellDAO {
     return cellMapper.getEventsByUnqId(unqId);
   }
 
-  public void addEvent(CellVO cell, Long memberId) {
-    cellMapper.addEvent(cell, memberId);
+  public void addEvent(CellVO cell, Long userId) {
+    cellMapper.addEvent(cell, userId);
   }
 
   public void deleteById(Long id) {

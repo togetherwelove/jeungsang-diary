@@ -442,7 +442,7 @@
                 $(".event-content").val(data.content);
 
                 // 파일 보이게 하기
-                $.getJSON("/event/" + id + "/files", function (data) {
+                $.getJSON("/files/" + id + "/event", function (data) {
                   $.each(data, function (index, file) {
                     $("<div>", { class: "d-flex mt-1" })
                       .append($('<div><i class="fa fa-file-image-o" aria-hidden="true"></i></div>').addClass("btn btn-primary preview-btn me-1"))

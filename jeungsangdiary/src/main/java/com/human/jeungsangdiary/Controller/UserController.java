@@ -7,18 +7,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import com.human.jeungsangdiary.member.MemberService;
-import com.human.jeungsangdiary.member.MemberVO;
+import com.human.jeungsangdiary.user.UserService;
+import com.human.jeungsangdiary.user.UserVO;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    MemberService memberService;
+    UserService userService;
 
     @GetMapping("/login")
-    public String login(@SessionAttribute(name = "memberId", required = false) Long id) {
+    public String login(@SessionAttribute(name = "userId", required = false) Long id) {
         if (id != null) {
             return "redirect:/";
         }
@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/join")
-    public String join(@SessionAttribute(name = "memberId", required = false) Long id) {
+    public String join(@SessionAttribute(name = "userId", required = false) Long id) {
         if (id != null) {
             return "redirect:/";
         }
@@ -34,12 +34,12 @@ public class UserController {
     }
 
     @GetMapping("/detail")
-    public String detail(@SessionAttribute(name = "memberId") Long id, Model model) {
+    public String detail(@SessionAttribute(name = "userId") Long id, Model model) {
         if (id == null) {
             return "redirect:/";
         }
-        MemberVO member = memberService.getLoggedinMember(id);
-        model.addAttribute("member", member);
+        UserVO user = userService.getLoggedinUser(id);
+        model.addAttribute("user", user);
         return "user/detail";
     }
 }

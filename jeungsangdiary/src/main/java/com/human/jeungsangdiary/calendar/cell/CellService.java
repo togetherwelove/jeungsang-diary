@@ -41,10 +41,10 @@ public class CellService {
   }
 
   @Transactional
-  public Long addEvent(CellVO cell, Long memberId) {
+  public Long addEvent(CellVO cell, Long userId) {
     Long unqId = cellDAO.getNextId();
     cell.setUnqId(unqId);
-    cellDAO.addEvent(cell, memberId);
+    cellDAO.addEvent(cell, userId);
     return unqId;
   }
 

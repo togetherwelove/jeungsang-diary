@@ -5,9 +5,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.human.jeungsangdiary.member.MemberDAO;
-import com.human.jeungsangdiary.member.MemberRoles;
-import com.human.jeungsangdiary.member.MemberVO;
+import com.human.jeungsangdiary.user.UserDAO;
+import com.human.jeungsangdiary.user.UserRoles;
+import com.human.jeungsangdiary.user.UserVO;
 
 @Component
 public class AdminTest implements CommandLineRunner {
@@ -16,18 +16,18 @@ public class AdminTest implements CommandLineRunner {
     PasswordEncoder PE;
 
     @Autowired
-    MemberDAO memberDAO;
+    UserDAO userDAO;
 
     @Override
     public void run(String... args) throws Exception {
-        MemberVO admin = MemberVO.builder()
+        UserVO admin = UserVO.builder()
                                 .email("admin")
                                 .password(PE.encode("admin"))
                                 .username("admin")
-                                .role(MemberRoles.ADMIN)
+                                .role(UserRoles.ADMIN)
                                 .build();
         try {
-            memberDAO.insertMember(admin);
+            userDAO.saveUser(admin);
             System.out.println(admin.getUsername() + " 계정 생성 됨");
         } catch (Exception e) {
             // 로그인 처리

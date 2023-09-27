@@ -10,7 +10,7 @@ public interface CellMapper {
 
   CellVO getEventById(Long cellId);
 
-  void addEvent(@Param("cell") CellVO cell, @Param("memberId") Long memberId);
+  void addEvent(@Param("cell") CellVO cell, @Param("userId") Long userId);
 
   void deleteById(Long id);
 

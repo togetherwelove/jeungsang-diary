@@ -44,7 +44,7 @@
                 CONTENT
             ) VALUES (
                 #{cell.unqId},
-                #{memberId},
+                #{userId},
                 #{cell.title},
                 #{cell.postDate},
                 #{cell.content}

@@ -24,6 +24,10 @@
               <form class="join-form needs-validation" novalidate>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
+                    <label>닉네임</label>
+                    <input class="form-control" type="text" name="username" />
+                  </li>
+                  <li class="list-group-item">
                     <label>이메일</label>
                     <input class="form-control" type="email" name="email" />
                   </li>
@@ -32,10 +36,6 @@
                     <input class="form-control" type="password" name="password" />
                     <label>비밀번호 확인</label>
                     <input class="form-control" type="password" name="passwordCheck" />
-                  </li>
-                  <li class="list-group-item">
-                    <label>닉네임</label>
-                    <input class="form-control" type="text" name="username" />
                   </li>
                 </ul>
                 <div class="card-body d-flex justify-content-end">
@@ -61,7 +61,7 @@
           data: data,
           success: function (response) {
             // 회원가입 성공 시
-            window.location = "/detail";
+            window.location = "user/login";
           },
           error: function (jqXHR, textStatus, errorThown) {
             let responseText = jqXHR.responseText;
@@ -70,16 +70,21 @@
             $(".invalid-feedback").remove();
             $("input.is-invalid").removeClass("is-invalid");
 
+            let handledField = {};
+
             for (let i = 0; i < errors.length; i++) {
               let error = errors[i];
-              // 중복 외 예외 처리
-              let inputField = $("input[name='" + error.field + "']");
 
+              if (handledField[error.field]) continue;
+
+              let inputField = $("input[name='" + error.field + "']");
               if (inputField.length > 0) {
                 let invalidFeedbackDiv = $("<div>", { class: "invalid-feedback" }).text(error.message);
 
                 inputField.addClass("is-invalid");
                 invalidFeedbackDiv.insertAfter(inputField);
+
+                handledField[error.field] = true;
               }
             }
           },

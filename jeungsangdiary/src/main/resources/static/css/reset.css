@@ -147,9 +147,3 @@ footer {
   bottom: 30px;
   font-size: 17px;
 }
-
-/* 글씨 드래그 시, 상태를 지정하는 선택자 */
-::selection {
-  background-color: var(--main);
-  color: white;
-}
