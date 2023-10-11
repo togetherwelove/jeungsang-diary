@@ -51,4 +51,22 @@
 		DELETE FROM boards WHERE UNQ_ID = #{UNQ_ID}
 	</delete>
 
+    <!-- 댓글 등록 -->
+    <insert id="insertComment" parameterType="com.human.jeungsangdiary.board.domain.Comment">
+        INSERT INTO COMMENTS (
+                              board_id,
+                              user_id,
+                              content,
+                              write_date,
+                              UNQ_ID
+                            ) VALUES (
+                              BOARD_SEQ.CURRVAL,
+                              #{content},
+                              TO_CHAR(WRITE_DATE, 'yyyy-MM-dd') as writeDate
+                            )
+    </insert>
+
+    <select id="selectCommentList" resultType="com.human.jeungsangdiary.board.domain.Comment">
+        SELECT * FROM comments WHERE board_id = #{board_id}
+    </select>
 </mapper>

@@ -11,8 +11,8 @@
             )
 		VALUES (
             BOARD_SEQ.CURRVAL, 
-            #{originalName}, 
-            #{storedName}
+            #{ORIGINAL_NAME}, 
+            #{STORED_NAME}
             )
 	</insert>
 	

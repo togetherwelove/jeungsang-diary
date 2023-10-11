@@ -47,15 +47,19 @@
           <td th:text="${board.content}">내용</td>
         </tr>
 
-        <div th:if="${down}">
-          <button th:text="${down.filename}">첨부파일.jpg</button>
+        <div class="attach-file" th:if="${down}">
+          <ul> <!-- 목록 -->
+            <li>
+              <a th:href="|download/${down.fno}|" th:text="${down.filename}">첨부파일.jpg</a>
+            </li>
+          </ul>			
         </div>
 
       </table>
       <span>
-        <button type="button" class="btn btn-outline-primary" id="btn-comment-update">이전</button>
-        <a href="/board/list?page=1" class="btn btn-outline-primary" id="btn-comment-insert">목록</a>
-        <button type="button" class="btn btn-outline-primary" id="btn-comment-update">다음</button>
+        <button type="button" class="btn btn-outline-primary" id="btn-content-update">이전</button>
+        <a href="/board/list?page=1" class="btn btn-outline-primary" id="btn-content-insert">목록</a>
+        <button type="button" class="btn btn-outline-primary" id="btn-content-update">다음</button>
       </span>
       <span style="float: right">
         <button type="button" href="javascript:;" class="btn btn-outline-primary" id="update">수정</button>
@@ -80,7 +84,51 @@
           alert(unqId);
         }
       </script>
+
+     
+      <div>
+        <br>
+        <h5>댓글</h5>
+        <br>
+        <div>
+          <form name="comment-form" action="/board/detail?unqId=#{unqId}" method="post" autocomplete="off">
+            <div>
+              <input type="hidden" name="idx" th:value="*{idx}" />
+              <textarea name="content" class="form-control" rows="3"></textarea>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-outline-primary" id="btn-comment-update">등록</button>
+          </form>
+        </div>
+      </div>
       
+      <script>
+      $(docment).ready(function(){
+          getCommentList();
+      })
+
+      function getCommentList(){
+          var board_id = $('input[name=board_id]').val();
+          $.ajax({
+              type:'GET',
+              url:'getCommentList',
+              data:{board_id},
+              success : function(result){
+                console.log(result);
+                for(var i=0; i < result.length; i++){
+                    var str = "<div class=\"comment\">"
+                    str += result[i].content + "</div></hr>"
+                    $("#comment").append(str);
+                }
+              },
+              error: function(result) { 
+              },
+              complete: function() {
+              }
+          })
+      }
+      
+      </script>
     <div th:replace="fragments/common :: footer"></div>
   </body>
 </html>
