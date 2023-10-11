@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.jeungsangdiary.board.mapper.FilesMapper">
+
+    <!-- 첨부파일 저장 -->
+	<insert id="insertFiles">
+		INSERT INTO FILES (
+            BOARD_ID, 
+            ORIGINAL_NAME, 
+            STORED_NAME
+            )
+		VALUES (
+            BOARD_SEQ.CURRVAL, 
+            #{ORIGINAL_NAME}, 
+            #{STORED_NAME}
+            )
+	</insert>
+	
+	<!-- 첨부파일 목록 가져오기 -->
+	<select id="selectFilesList" resultType="com.human.jeungsangdiary.board.domain.Files">
+		SELECT 
+            BOARD_ID as boradId, 
+            ORIGINAL_NAME as originalName, 
+            STORED_NAME as storedName
+        FROM 
+            FILES
+        WHERE 
+            BOARD_ID = #{BOARD_ID}
+
+	</select>
+
+</mapper>

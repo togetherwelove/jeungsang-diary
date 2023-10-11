@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <div th:replace="fragments/common :: scripts"></div>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>게시글 목록</title>
+    <title>게시글 쓰기</title>
   </head>
 
   <body>
@@ -27,32 +27,29 @@
             <td style="width: 7.5%" id="hit">조회수</td>
           </tr>
 
-          <tr class="text-center" th:each="board:${list}">
-            <td style="width: 7.5%" id="unqId" th:text="${board.unqId}">번호</td>
-            <td style="width: 60%" id="title"><a th:href="|read?unqId=${board.unqId}|" th:text="${board.title}">제목</a></td>
-            <td style="width: 10%" id="userId" th:text="${board.userId}">작성자</td>
-            <td style="width: 15%" id="writeDate" th:text="${board.writeDate}">등록일자</td>
-            <td style="width: 7.5%" id="hit" th:text="${board.hit}">조회수</td>
+          <tr class="text-center" th:each="obj:${list}">
+            <td style="width: 7.5%" id="unqId" th:text="${obj.unqId}">번호</td>
+            <td style="width: 60%" id="title"><a th:href="|detail?unqId=${obj.unqId}|" th:text="${obj.title}">제목</a></td>
+            <td style="width: 10%" id="userId" th:text="${obj.userId}">작성자</td>
+            <td style="width: 15%" id="writeDate" th:text="${obj.writeDate}">등록일자</td>
+            <td style="width: 7.5%" id="hit" th:text="${obj.hit}">조회수</td>
           </tr>
         </thead>
-        <tbody id="board-data">
-          <tr>
-            <td class="text-center" colspan="5">조회된 데이터가 없습니다.</td>
-          </tr>
-        </tbody>
       </table>
 
       <!-- 페이지네이션 -->
       <nav class="d-flex justify-content-center">
         <ul class="pagination">
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
+            <a th:href="|list?page=${1}|" class="page-link" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
+          <li class="page-item" th:each="pageno:${#numbers.sequence(pageObj.startPage, pageObj.endPage)}">
+            <a class="page-link" th:href="|list?page=${pageno}|" th:text="${pageno}">1</a>
+          </li>
+          <li class="page-item" >
+            <a class="page-link" th:href="|list?page=${pageObj.endPage}|" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>

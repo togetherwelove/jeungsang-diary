@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <div th:replace="fragments/common :: scripts"></div>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시글 읽기</title>
+  </head>
+  <body>
+    <div th:replace="fragments/common :: header"></div>
+    <section class="container">
+      <!-- 제목 영역 -->
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>게시글 읽기</h1>
+      </div>
+      <br>
+
+      <!-- 게시글 목록 -->
+      <table class="table table-striped table-hover">
+        <tr>
+          <td>조회수</td>
+          <td th:text="${board.hit}">조회수</td>
+        </tr>
+
+        <tr>
+          <td>등록일자</td>
+          <td th:text="${board.writeDate}" id="writeDate">등록일자</td>
+        </tr>
+
+        <tr>
+          <td>글번호</td>
+          <td th:text="${board.unqId}" id="unqId">글번호</td>
+        </tr>
+
+        <tr>
+          <td>제목</td>
+          <td th:text="${board.title}">제목</td>
+        </tr>
+
+        <tr>
+          <td>작성자</td>
+          <td th:text="${board.userId}">작성자</td>
+        </tr>
+
+        <tr>
+          <td>내용</td>
+          <td th:text="${board.content}">내용</td>
+        </tr>
+
+        <div class="attach-file" th:if="${down}">
+          <ul> <!-- 목록 -->
+            <li>
+              <a th:href="|download/${down.fno}|" th:text="${down.filename}">첨부파일.jpg</a>
+            </li>
+          </ul>			
+        </div>
+
+      </table>
+      <span>
+        <button type="button" class="btn btn-outline-primary" id="btn-content-update">이전</button>
+        <a href="/board/list?page=1" class="btn btn-outline-primary" id="btn-content-insert">목록</a>
+        <button type="button" class="btn btn-outline-primary" id="btn-content-update">다음</button>
+      </span>
+      <span style="float: right">
+        <button type="button" href="javascript:;" class="btn btn-outline-primary" id="update">수정</button>
+        <button type="button" th:onclick="delBoard([[${board.unqId}]]);" class="btn btn-outline-primary" id="delete">삭제</button>
+      </span>
+
+      <script src="/js/jquery-3.7.0.min.js"></script>
+      <script>
+        function delBoard(unqId) {
+          
+          ok = confirm("해당글을 삭제하시겠습니까?", "삭제학인");
+          
+          //alert(ok); // true면 삭제진행
+          
+          if(ok) {
+            location.href="delete?unqId="+unqId;
+          }
+        }
+        
+        function modBoard(unqId) {
+          
+          alert(unqId);
+        }
+      </script>
+
+     
+      <div>
+        <br>
+        <h5>댓글</h5>
+        <br>
+        <div>
+          <form name="comment-form" action="/board/detail?unqId=#{unqId}" method="post" autocomplete="off">
+            <div>
+              <input type="hidden" name="idx" th:value="*{idx}" />
+              <textarea name="content" class="form-control" rows="3"></textarea>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-outline-primary" id="btn-comment-update">등록</button>
+          </form>
+        </div>
+      </div>
+      
+      <script>
+      $(docment).ready(function(){
+          getCommentList();
+      })
+
+      function getCommentList(){
+          var board_id = $('input[name=board_id]').val();
+          $.ajax({
+              type:'GET',
+              url:'getCommentList',
+              data:{board_id},
+              success : function(result){
+                console.log(result);
+                for(var i=0; i < result.length; i++){
+                    var str = "<div class=\"comment\">"
+                    str += result[i].content + "</div></hr>"
+                    $("#comment").append(str);
+                }
+              },
+              error: function(result) { 
+              },
+              complete: function() {
+              }
+          })
+      }
+      
+      </script>
+    <div th:replace="fragments/common :: footer"></div>
+  </body>
+</html>

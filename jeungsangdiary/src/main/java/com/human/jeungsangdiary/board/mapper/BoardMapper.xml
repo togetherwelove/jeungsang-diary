@@ -3,7 +3,7 @@
 <mapper namespace="com.human.jeungsangdiary.board.mapper.BoardMapper">
     
     <!-- 게시글 목록 -->
-    <select id="selectBoardList" resultType="com.human.jeungsangdiary.board.vo.Board">
+    <select id="selectBoardList" resultType="com.human.jeungsangdiary.board.domain.Board">
         SELECT 
             UNQ_ID as unqId,
             USER_ID as userId,
@@ -13,6 +13,7 @@
         FROM
             boards
         ORDER BY unqId DESC
+        OFFSET 10*(#{page}-1) ROWS FETCH NEXT 10 ROWS ONLY
     </select>
 
     <!-- 게시글 총갯수 -->
@@ -21,25 +22,51 @@
 	</select>
 	
 	<!-- 게시글 읽기 -->
-	<select id="selectBoardOne" resultType="com.human.jeungsangdiary.board.vo.Board">
+	<select id="selectBoardOne" resultType="com.human.jeungsangdiary.board.domain.Board">
 		SELECT * FROM boards WHERE UNQ_ID = #{UNQ_ID}
 	</select>
 
     <!-- 게시글 쓰기 -->
-    <insert id="insertBoardList">
+    <insert id="insertBoard">
         INSERT INTO boards (
-                            USER_ID,
+                            UNQ_ID,
                             TITLE,
                             CONTENT,
-                            HIT,
-                            WRITE_DATE
+                            HIT
                         ) VALUES (
-                            #{userId},
+                            BOARD_SEQ.NEXTVAL,
                             #{title},
                             #{content},
-                            #{hit},
-                            #{writeDate}
+                            #{hit}
                         )
     </insert>
 
+    <!-- 조회수 업데이트 -->
+    <update id="updateBoardHit">
+		UPDATE boards SET hit=hit+1 WHERE UNQ_ID = #{UNQ_ID}
+	</update>
+
+    <!-- 게시글 삭제 -->
+	<delete id="deleteBoardOne">
+		DELETE FROM boards WHERE UNQ_ID = #{UNQ_ID}
+	</delete>
+
+    <!-- 댓글 등록 -->
+    <insert id="insertComment" parameterType="com.human.jeungsangdiary.board.domain.Comment">
+        INSERT INTO COMMENTS (
+                              board_id,
+                              user_id,
+                              content,
+                              write_date,
+                              UNQ_ID
+                            ) VALUES (
+                              BOARD_SEQ.CURRVAL,
+                              #{content},
+                              TO_CHAR(WRITE_DATE, 'yyyy-MM-dd') as writeDate
+                            )
+    </insert>
+
+    <select id="selectCommentList" resultType="com.human.jeungsangdiary.board.domain.Comment">
+        SELECT * FROM comments WHERE board_id = #{board_id}
+    </select>
 </mapper>
