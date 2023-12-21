@@ -42,7 +42,7 @@ public class CalendarController {
   @Autowired
   FileUtil fileUtil;
 
-  @RequestMapping
+  @GetMapping
   public String calendar(Model model) {
     List<CategoryVO> categories = categoryService.getCategories();
     model.addAttribute("categories", categories);
